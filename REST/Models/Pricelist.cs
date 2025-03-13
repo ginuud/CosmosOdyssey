@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CosmosOdyssey.REST.Models
 {
-    public class Pricelist
+    public class PriceList
     {
         public string Id { get; set; }
         public DateTime ValidUntil { get; set; }

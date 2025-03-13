@@ -25,6 +25,21 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=admin
     networks:
       - cosmos_net
+  
+  backend:
+    image: cosmos-odyssey-backend
+    container_name: cosmos-odyssey-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_URL=postgres://cosmos:odyssey@postgres:5432/cosmos_odyssey
+    depends_on:
+      - postgres
+    networks:
+      - cosmos_net
 
 networks:
   cosmos_net:
