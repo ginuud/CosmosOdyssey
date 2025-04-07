@@ -9,6 +9,6 @@ namespace CosmosOdyssey.REST.Models
     {
         public string Id { get; set; }
         public DateTime ValidUntil { get; set; }
-        public List<Leg> Legs { get; set; } = new List<Leg>(); //Üks-mitmele seos Legidega
+        public ICollection<Leg> Legs { get; set; } = new List<Leg>(); //Üks-mitmele seos Legidega
     }
 }

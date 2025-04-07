@@ -1,43 +1,59 @@
 version: '3.8'
 
 services:
-  postgres:
+  db:
     image: postgres:17-alpine
     container_name: CosmosOdyssey-db
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=cosmos
-      - POSTGRES_PASSWORD=odyssey
-      - POSTGRES_DB=cosmos_odyssey
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: heaparool
+      POSTGRES_DB: CosmosOdyssey-db
     networks:
       - cosmos_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d CosmosOdyssey-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   pgadmin4:
-    image: dpage/pgadmin4:8
+    image: dpage/pgadmin4:latest
     container_name: pgadmin-CosmosOdyssey
     ports:
-      - 8080:80
+      - 8082:80
     volumes:
-      - cosmos-pgadmin-data:/var/lib/pgadmin
+      - pgadmin-data:/var/lib/pgadmin
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
+      PGADMIN_DEFAULT_EMAIL: cosmos@odyssey.com
+      PGADMIN_DEFAULT_PASSWORD: cosmos
     networks:
       - cosmos_net
+    depends_on:
+      - db
   
   backend:
-    image: cosmos-odyssey-backend
-    container_name: cosmos-odyssey-backend
     build:
-      context: ./backend
+      context: ./REST
       dockerfile: Dockerfile
     ports:
-      - 3000:3000
+      - 3000:80
     environment:
-      - DATABASE_URL=postgres://cosmos:odyssey@postgres:5432/cosmos_odyssey
+      - ConnectionStrings__Default=Host=db;Port=5432;Database=CosmosOdyssey-db;Username=postgres;Password=heaparool
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ./REST/appsettings.Docker.json:/app/appsettings.Docker.json
     depends_on:
-      - postgres
+      db: 
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
     networks:
       - cosmos_net
 
@@ -45,4 +61,4 @@ networks:
   cosmos_net:
 
 volumes:
-  cosmos-pgadmin-data:
+  pgadmin-data:

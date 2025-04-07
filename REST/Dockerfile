@@ -1,34 +1,20 @@
-# Define base image for Node.js
-FROM node:18-alpine AS builder
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine3.20 AS build
+WORKDIR /src
 
-# Set working directory
-WORKDIR /app
+COPY ["REST.csproj", "./"]
+RUN dotnet restore "REST.csproj"
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy all source code
 COPY . .
 
-# Build the application (if needed)
-# RUN npm run build
+RUN dotnet publish "REST.csproj" -c Release -o /publish
 
-# Runtime
-FROM node:18-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine3.20
 WORKDIR /app
 
-# Copy only necessary files from the builder stage
-COPY --from=builder /app .
+COPY --from=build /publish .
 
-# Expose the port
-EXPOSE 3000
+ENV ASPNETCORE_URLS=http://+:8080
+ENV DOTNET_RUNNING_IN_CONTAINER=true
 
-# Add a non-root user
-RUN addgroup -S runner && adduser -S runner -G runner
-USER runner
-
-# Start the application
-CMD ["npm", "start"]
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "REST.dll"]

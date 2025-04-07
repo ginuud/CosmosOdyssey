@@ -10,8 +10,9 @@ namespace CosmosOdyssey.REST.Models
         public string Id { get; set; }
         public RouteInfo RouteInfo { get; set; }
         public string RouteInfoId { get; set; } //FK
-        public List<Provider> Providers { get; set; } = new List<Provider>(); //Üks-mitmele seos Provideritega
-        public string PricelistId { get; set; } // FK
-        public Pricelist Pricelist { get; set; }
+        public ICollection<Provider> Providers { get; set; } = new List<Provider>(); //Üks-mitmele seos Offeritega
+        public PriceList PriceList { get; set; }
+        public string PriceListId { get; set; } // FK
+
     }
 }

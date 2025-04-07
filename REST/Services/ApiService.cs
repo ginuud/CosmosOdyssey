@@ -17,15 +17,15 @@ namespace CosmosOdyssey.REST.Services
             _httpClient = httpClient;
         }
 
-        public async Task<PriceList> GetTravelPricesAsync() // see vist on tegelt ju priceList controlleri get päring 
+        public async Task<PriceList> GetTravelPriceListAsync()
         {
             var response = await _httpClient.GetAsync("https://cosmosodyssey.azurewebsites.net/api/v1.0/TravelPrices");
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-            var travelPrices = JsonConvert.DeserializeObject<PriceList>(json);
+            var travelPriceList = JsonConvert.DeserializeObject<PriceList>(json);
 
-            return travelPrices;
+            return travelPriceList;
         }
     }
 
