@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using CosmosOdyssey.REST.Models;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json.Converters;
+using System.Globalization;
 
 namespace CosmosOdyssey.REST.Data
 {
@@ -30,10 +33,15 @@ namespace CosmosOdyssey.REST.Data
             response.EnsureSuccessStatusCode();
 
             var jsonString = await response.Content.ReadAsStringAsync();
-            var newPriceList = JsonSerializer.Deserialize<PriceList>(jsonString, new JsonSerializerOptions
+
+            var options = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true
-            });
+                PropertyNameCaseInsensitive = true,
+                NumberHandling = JsonNumberHandling.AllowReadingFromString,
+                Converters = { new JsonDateTimeConverter(), new JsonGuidConverter() }
+            };
+
+            var newPriceList = JsonSerializer.Deserialize<PriceList>(jsonString, options);
 
             _context.ChangeTracker.Clear();
             await _context.Providers.ExecuteDeleteAsync();
@@ -83,9 +91,36 @@ namespace CosmosOdyssey.REST.Data
             }
             else
             {
+                Console.WriteLine($"Adding Planet with ID: {planet.Id}");
                 await _context.Planets.AddAsync(planet);
                 return planet;
             }
+        }
+        public class JsonDateTimeConverter : JsonConverter<DateTime>
+        {
+            public override DateTime Read(
+                ref Utf8JsonReader reader,
+                Type typeToConvert,
+                JsonSerializerOptions options)
+            {
+                return DateTime.Parse(reader.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+            }
+
+            public override void Write(
+                Utf8JsonWriter writer,
+                DateTime value,
+                JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.ToString("O"));
+            }
+        }
+        public class JsonGuidConverter : JsonConverter<Guid>
+        {
+            public override Guid Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options)
+                => Guid.Parse(reader.GetString());
+
+            public override void Write(Utf8JsonWriter writer, Guid value, JsonSerializerOptions options)
+                => writer.WriteStringValue(value.ToString());
         }
     }
 }

@@ -7,7 +7,7 @@ namespace CosmosOdyssey.REST.Models
 {
     public class Planet
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 }

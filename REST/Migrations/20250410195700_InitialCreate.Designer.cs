@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace REST.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250406222055_InitialCreate")]
+    [Migration("20250410195700_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -27,8 +27,8 @@ namespace REST.Migrations
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.Company", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -36,21 +36,19 @@ namespace REST.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.Leg", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("PriceListId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("PriceListId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("RouteInfoId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("RouteInfoId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -58,13 +56,13 @@ namespace REST.Migrations
 
                     b.HasIndex("RouteInfoId");
 
-                    b.ToTable("Legs");
+                    b.ToTable("Legs", (string)null);
                 });
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.Planet", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -72,40 +70,41 @@ namespace REST.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Planets");
+                    b.ToTable("Planets", (string)null);
                 });
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.PriceList", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("ValidUntil")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(7)
+                        .HasColumnType("timestamp(7) with time zone");
 
                     b.HasKey("Id");
 
-                    b.ToTable("PriceLists");
+                    b.ToTable("PriceLists", (string)null);
                 });
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.Provider", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("CompanyId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("FlightEnd")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(7)
+                        .HasColumnType("timestamp(7) with time zone");
 
                     b.Property<DateTime>("FlightStart")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(7)
+                        .HasColumnType("timestamp(7) with time zone");
 
-                    b.Property<string>("LegId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("LegId")
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -116,24 +115,22 @@ namespace REST.Migrations
 
                     b.HasIndex("LegId");
 
-                    b.ToTable("Providers");
+                    b.ToTable("Providers", (string)null);
                 });
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.RouteInfo", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<long>("Distance")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("FromId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("FromId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ToId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("ToId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -141,7 +138,7 @@ namespace REST.Migrations
 
                     b.HasIndex("ToId");
 
-                    b.ToTable("RouteInfos");
+                    b.ToTable("RouteInfos", (string)null);
                 });
 
             modelBuilder.Entity("REST.Models.Customer", b =>

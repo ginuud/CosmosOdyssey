@@ -7,7 +7,7 @@ namespace CosmosOdyssey.REST.Models
 {
     public class PriceList
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public DateTime ValidUntil { get; set; }
         public ICollection<Leg> Legs { get; set; } = new List<Leg>(); //Üks-mitmele seos Legidega
     }

@@ -7,12 +7,12 @@ namespace CosmosOdyssey.REST.Models
 {
     public class Leg
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public RouteInfo RouteInfo { get; set; }
-        public string RouteInfoId { get; set; } //FK
+        public Guid RouteInfoId { get; set; } //FK
         public ICollection<Provider> Providers { get; set; } = new List<Provider>(); //Üks-mitmele seos Offeritega
         public PriceList PriceList { get; set; }
-        public string PriceListId { get; set; } // FK
+        public Guid PriceListId { get; set; } // FK
 
     }
 }

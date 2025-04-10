@@ -24,8 +24,8 @@ namespace REST.Migrations
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.Company", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -38,16 +38,14 @@ namespace REST.Migrations
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.Leg", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("PriceListId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("PriceListId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("RouteInfoId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("RouteInfoId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -60,8 +58,8 @@ namespace REST.Migrations
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.Planet", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -74,11 +72,12 @@ namespace REST.Migrations
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.PriceList", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("ValidUntil")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(7)
+                        .HasColumnType("timestamp(7) with time zone");
 
                     b.HasKey("Id");
 
@@ -87,22 +86,22 @@ namespace REST.Migrations
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.Provider", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("CompanyId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("FlightEnd")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(7)
+                        .HasColumnType("timestamp(7) with time zone");
 
                     b.Property<DateTime>("FlightStart")
-                        .HasColumnType("timestamp with time zone");
+                        .HasPrecision(7)
+                        .HasColumnType("timestamp(7) with time zone");
 
-                    b.Property<string>("LegId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("LegId")
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -118,19 +117,17 @@ namespace REST.Migrations
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.RouteInfo", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<long>("Distance")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("FromId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("FromId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ToId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("ToId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 

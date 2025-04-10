@@ -38,7 +38,8 @@ namespace CosmosOdyssey.REST.Data
             modelBuilder.Entity<PriceList>(entity =>
             {
                 entity.HasKey(p => p.Id);
-                entity.Property(p => p.Id).HasConversion<string>();
+                entity.Property(p => p.Id).ValueGeneratedNever();
+                entity.Property(p => p.ValidUntil).HasPrecision(7);
 
                 entity.HasMany(p => p.Legs)
                       .WithOne()
@@ -48,7 +49,7 @@ namespace CosmosOdyssey.REST.Data
             modelBuilder.Entity<Leg>(entity =>
             {
                 entity.HasKey(l => l.Id);
-                entity.Property(l => l.Id).HasConversion<string>();
+                entity.Property(l => l.Id).ValueGeneratedNever();
 
                 entity.HasOne(l => l.RouteInfo)
                       .WithMany()
@@ -68,7 +69,7 @@ namespace CosmosOdyssey.REST.Data
             modelBuilder.Entity<RouteInfo>(entity =>
             {
                 entity.HasKey(r => r.Id);
-                entity.Property(r => r.Id).HasConversion<string>();
+                entity.Property(r => r.Id).ValueGeneratedNever();
 
                 entity.HasOne(r => r.From)
                       .WithMany()
@@ -84,7 +85,9 @@ namespace CosmosOdyssey.REST.Data
             modelBuilder.Entity<Provider>(entity =>
             {
                 entity.HasKey(p => p.Id);
-                entity.Property(p => p.Id).HasConversion<string>();
+                entity.Property(p => p.Id).ValueGeneratedNever();
+                entity.Property(p => p.FlightStart).HasPrecision(7);
+                entity.Property(p => p.FlightEnd).HasPrecision(7);
 
                 entity.HasOne(p => p.Company)
                       .WithMany(c => c.Providers)
@@ -94,13 +97,13 @@ namespace CosmosOdyssey.REST.Data
             modelBuilder.Entity<Company>(entity =>
             {
                 entity.HasKey(c => c.Id);
-                entity.Property(c => c.Id).HasConversion<string>();
+                entity.Property(c => c.Id).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<Planet>(entity =>
             {
                 entity.HasKey(p => p.Id);
-                entity.Property(p => p.Id).HasConversion<string>();
+                entity.Property(p => p.Id).ValueGeneratedNever();
             });
         }
 
