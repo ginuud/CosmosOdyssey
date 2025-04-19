@@ -5,10 +5,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace REST.Migrations
 {
-    /// <inheritdoc />
     public partial class InitialCreate : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
 
@@ -172,8 +170,6 @@ namespace REST.Migrations
             migrationBuilder.Sql("ALTER TABLE \"Companies\" ALTER COLUMN \"Id\" TYPE uuid USING \"Id\"::uuid;");
 
         }
-
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

@@ -1,9 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace CosmosOdyssey.REST.Data
 {
@@ -27,30 +28,46 @@ namespace CosmosOdyssey.REST.Data
 
             Console.WriteLine($"Using connection string: {config.GetConnectionString("DefaultConnection")}");
 
-            for (int i = 0; i < 5; i++)
+            try
             {
-                try
+                if (await context.Database.CanConnectAsync(cancellationToken))
                 {
-                    if (await context.Database.CanConnectAsync(cancellationToken))
-                    {
-                        Console.WriteLine("Database connection successful");
-                        await context.Database.MigrateAsync(cancellationToken);
+                    Console.WriteLine("Database connection successful");
 
-                        await dataService.SyncTravelPricesAsync();
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"RouteInfos\" ALTER COLUMN \"Id\" TYPE uuid USING \"Id\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"RouteInfos\" ALTER COLUMN \"FromId\" TYPE uuid USING \"FromId\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"RouteInfos\" ALTER COLUMN \"ToId\" TYPE uuid USING \"ToId\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Providers\" ALTER COLUMN \"Id\" TYPE uuid USING \"Id\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Providers\" ALTER COLUMN \"CompanyId\" TYPE uuid USING \"CompanyId\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Providers\" ALTER COLUMN \"LegId\" TYPE uuid USING \"LegId\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"PriceLists\" ALTER COLUMN \"Id\" TYPE uuid USING \"Id\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Planets\" ALTER COLUMN \"Id\" TYPE uuid USING \"Id\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Legs\" ALTER COLUMN \"Id\" TYPE uuid USING \"Id\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Legs\" ALTER COLUMN \"RouteInfoId\" TYPE uuid USING \"RouteInfoId\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Legs\" ALTER COLUMN \"PriceListId\" TYPE uuid USING \"PriceListId\"::uuid;");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Companies\" ALTER COLUMN \"Id\" TYPE uuid USING \"Id\"::uuid;");
 
-                        return;
-                    }
+                    await dataService.SyncTravelPricesAsync();
+
+                    Console.WriteLine("DataSeeder completed successfully");
+                    return;
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine($"Attempt {i + 1}/5 failed: {ex.Message}");
-                    await Task.Delay(5000, cancellationToken);
+                    Console.WriteLine("Database connection failed");
                 }
             }
-
-            throw new Exception("Failed to connect to database after 5 attempts");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"DataSeeder failed: {ex.Message}");
+                throw;
+            }
         }
 
-        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("DataSeeder stopped");
+            return Task.CompletedTask;
+        }
     }
 }

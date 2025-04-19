@@ -38,18 +38,41 @@ namespace CosmosOdyssey.REST.Data
             {
                 PropertyNameCaseInsensitive = true,
                 NumberHandling = JsonNumberHandling.AllowReadingFromString,
-                Converters = { new JsonDateTimeConverter(), new JsonGuidConverter() }
+                Converters = { new JsonGuidConverter() }
             };
 
             var newPriceList = JsonSerializer.Deserialize<PriceList>(jsonString, options);
 
-            _context.ChangeTracker.Clear();
-            await _context.Providers.ExecuteDeleteAsync();
-            await _context.Legs.ExecuteDeleteAsync();
-            await _context.RouteInfos.ExecuteDeleteAsync();
-            await _context.PriceLists.ExecuteDeleteAsync();
-            await _context.Companies.ExecuteDeleteAsync();
-            await _context.Planets.ExecuteDeleteAsync();
+            // _context.ChangeTracker.Clear();
+            // await _context.Providers.ExecuteDeleteAsync();
+            // await _context.Legs.ExecuteDeleteAsync();
+            // await _context.RouteInfos.ExecuteDeleteAsync();
+            // await _context.PriceLists.ExecuteDeleteAsync();
+            // await _context.Companies.ExecuteDeleteAsync();
+            // await _context.Planets.ExecuteDeleteAsync();
+
+            var existingPriceList = await _context.PriceLists.FindAsync(newPriceList.Id);
+            if (existingPriceList != null)
+            {
+                return;
+            }
+
+            var priceListCount = await _context.PriceLists.CountAsync();
+            if (priceListCount >= 15)
+            {
+                var oldestPriceList = await _context.PriceLists.OrderBy(pl => pl.ValidUntil).FirstOrDefaultAsync();
+                if (oldestPriceList != null)
+                {
+                    var legsToRemove = _context.Legs.Where(l => l.PriceListId == oldestPriceList.Id);
+                    var routeInfosToRemove = _context.RouteInfos.Where(ri => legsToRemove.Select(l => l.RouteInfoId).Contains(ri.Id));
+                    var providersToRemove = _context.Providers.Where(p => legsToRemove.SelectMany(l => l.Providers).Select(pr => pr.Id).Contains(p.Id));
+
+                    _context.Providers.RemoveRange(providersToRemove);
+                    _context.RouteInfos.RemoveRange(routeInfosToRemove);
+                    _context.Legs.RemoveRange(legsToRemove);
+                    _context.PriceLists.Remove(oldestPriceList);
+                }
+            }
 
             foreach (var leg in newPriceList.Legs)
             {
@@ -63,7 +86,6 @@ namespace CosmosOdyssey.REST.Data
                     provider.Company = await GetOrAddCompany(provider.Company);
                 }
             }
-
             await _context.PriceLists.AddAsync(newPriceList);
             await _context.SaveChangesAsync();
         }
@@ -91,29 +113,28 @@ namespace CosmosOdyssey.REST.Data
             }
             else
             {
-                Console.WriteLine($"Adding Planet with ID: {planet.Id}");
                 await _context.Planets.AddAsync(planet);
                 return planet;
             }
         }
-        public class JsonDateTimeConverter : JsonConverter<DateTime>
-        {
-            public override DateTime Read(
-                ref Utf8JsonReader reader,
-                Type typeToConvert,
-                JsonSerializerOptions options)
-            {
-                return DateTime.Parse(reader.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-            }
+        // public class JsonDateTimeConverter : JsonConverter<DateTime>
+        // {
+        //     public override DateTime Read(
+        //         ref Utf8JsonReader reader,
+        //         Type typeToConvert,
+        //         JsonSerializerOptions options)
+        //     {
+        //         return DateTime.Parse(reader.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+        //     }
 
-            public override void Write(
-                Utf8JsonWriter writer,
-                DateTime value,
-                JsonSerializerOptions options)
-            {
-                writer.WriteStringValue(value.ToString("O"));
-            }
-        }
+        //     public override void Write(
+        //         Utf8JsonWriter writer,
+        //         DateTime value,
+        //         JsonSerializerOptions options)
+        //     {
+        //         writer.WriteStringValue(value.ToString("O"));
+        //     }
+        // }
         public class JsonGuidConverter : JsonConverter<Guid>
         {
             public override Guid Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options)

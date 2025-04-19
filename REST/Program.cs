@@ -32,13 +32,20 @@ builder.Services.AddSwaggerGen();
 //     .AddScoped<IReservationRepository, ReservationRepo>()
 //     .AddScoped<IRouteInfoRepository, RouteInfoRepo>()
 
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IDataService, DataService>();
 builder.Services.AddScoped<IDataService, DataService>();
 builder.Services.AddHostedService<DataSeeder>();
+builder.Services.AddHostedService<TravelPriceSyncService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+using (var scope = ((IApplicationBuilder)app).ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+using (var context = scope.ServiceProvider.GetService<DataContext>())
+{
+    context?.Database.EnsureCreated();
+}
+
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -47,5 +54,5 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapControllers();
 
-app.Run("http://*:8080");
+app.Run("http://*:80");
 

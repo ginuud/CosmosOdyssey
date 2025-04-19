@@ -1,0 +1,33 @@
+{
+    "name": "CosmosOdyssey Dev Container",
+    "dockerComposeFile": "../docker-compose.yml", 
+    "service": "backend", 
+    "workspaceFolder": "/workspace",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "VisualStudioExptTeam.intellicode-api-usage-examples",
+          "christian-kohler.path-intellisense",
+          "eamodio.gitlens", 
+        "formulahendry.auto-rename-tag",
+  
+          "ms-dotnettools.csdevkit",
+          "jchannon.csharpextensions",
+          "jmrog.vscode-nuget-package-manager", 
+          "ms-dotnettools.vscodeintellicode-csharp", 
+  
+          "vue.volar", 
+          "vue.vscode-vue-snippets",
+          "voorjaaraan.windicss-intellisense",
+          "dbaeumer.vscode-eslint", 
+          "esbenp.prettier-vscode", 
+          "christian-kohler.npm-intellisense", 
+          "xabikos.javascriptsnippets", 
+        ]
+      }
+    },
+    "settings": { 
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    }
+  }

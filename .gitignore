@@ -1,4 +1,5 @@
-/bin
+/REST/bin
 /obj
 .vscode
 /REST/obj
+node_modules
