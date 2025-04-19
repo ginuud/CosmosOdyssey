@@ -1,0 +1,26 @@
+diff --git a/node_modules/@nuxt/ui/dist/runtime/plugins/colors.js b/node_modules/@nuxt/ui/dist/runtime/plugins/colors.js
+index 74ae833..04d45e7 100644
+--- a/node_modules/@nuxt/ui/dist/runtime/plugins/colors.js
++++ b/node_modules/@nuxt/ui/dist/runtime/plugins/colors.js
+@@ -1,6 +1,7 @@
+ import { computed } from "vue";
+ import colors from "tailwindcss/colors";
+-import { defineNuxtPlugin, useAppConfig, useNuxtApp, useHead } from "#imports";
++import { defineNuxtPlugin, useAppConfig, useNuxtApp } from "#imports";
++import { useHead } from "#head";
+ const shades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+ function getColor(color, shade) {
+   if (color in colors && typeof colors[color] === "object" && shade in colors[color]) {
+diff --git a/node_modules/@nuxt/ui/dist/runtime/types/form.d.ts b/node_modules/@nuxt/ui/dist/runtime/types/form.d.ts
+index 6ac7cff..e6311bf 100644
+--- a/node_modules/@nuxt/ui/dist/runtime/types/form.d.ts
++++ b/node_modules/@nuxt/ui/dist/runtime/types/form.d.ts
+@@ -25,7 +25,7 @@ export interface Form<T extends object> {
+ export type FormSchema<T extends object> = YupObjectSchema<T> | JoiSchema<T> | SuperstructSchema<any, any> | StandardSchemaV1;
+ export type FormInputEvents = 'input' | 'blur' | 'change' | 'focus';
+ export interface FormError<P extends string = string> {
+-    name?: P;
++    path?: P;
+     message: string;
+ }
+ export interface FormErrorWithId extends FormError {

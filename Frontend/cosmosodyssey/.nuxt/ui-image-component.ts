@@ -1,0 +1,1 @@
+export { default } from "C:/Users/Kiviselg/CosmosOdyssey/CosmosOdyssey/frontend/cosmosodyssey/node_modules/@nuxt/image/dist/runtime/components/NuxtImg.vue"

@@ -1,0 +1,1 @@
+export { default } from "file:///C:/Users/Kiviselg/CosmosOdyssey/CosmosOdyssey/frontend/cosmosodyssey/node_modules/@nuxt/vite-builder/dist/runtime/vite-node.mjs"
