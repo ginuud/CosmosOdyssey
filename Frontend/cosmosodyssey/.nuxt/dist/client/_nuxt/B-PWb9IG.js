@@ -1,1 +1,0 @@
-import{_ as o,v as t,y as n,x as r}from"./DpvA6arA.js";const s={};function a(c,e){return r(),t("div",null,e[0]||(e[0]=[n("h1",null,"Welcome to the Home Page",-1)]))}const _=o(s,[["render",a]]);export{_ as default};

@@ -1,15 +1,11 @@
-<script setup>
-  import SelectTrip from '~/components/selectTrip.vue';
-</script>
-
 <template>
-  <selectTrip/>
+  <SelectTrip />
 </template>
 
 <script setup lang="ts">
 
 definePageMeta({
-  layout: "initialLayout",
+  layout: "initial-layout",
 });
 </script>
 
