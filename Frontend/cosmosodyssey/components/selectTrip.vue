@@ -85,7 +85,38 @@ const onSubmit = async (event?: Event) => {
 //   }));
 // });
 
-const planetOptions = ref(['Earth', 'Mars', 'Venus', 'Jupiter', 'Saturn', 'Neptune', 'Pluto']);
+const planetOptions = ref([
+  {
+    label: 'Earth',
+    icon: 'i-lucide:earth',
+    value: 'Earth',
+  },
+  {
+    label: 'Mars',
+    value: 'Mars',
+  },
+  {
+    label: 'Venus',
+    value: 'Venus',
+  },
+  {
+    label: 'Jupiter',
+    value: 'Jupiter',
+  },
+  {
+    label: 'Saturn',
+    value: 'Saturn',
+  },
+  {
+    label: 'Neptune',
+    value: 'Neptune',
+  },
+  {
+    label: 'Pluto',
+    value: 'Pluto',
+    color: '#05379c',
+  }
+]);
 
 
 const animate = () => {
@@ -109,23 +140,22 @@ const animate = () => {
     <div class="fields-and-button-container">
       <div class="fields-container">
         <UFormField label="Origin" name="origin" class="field">
-          <USelectMenu v-model="selectTripForm.origin" 
-          :options = "planetOptions"
-          searchable
-          searchable-placeholder="Search origin..."
+          <USelectMenu 
+          v-model="selectTripForm.origin" 
+          :items = "planetOptions"
           placeholder="Select origin"
           class="custom-select"
-          />
+          >
+          </USelectMenu>
         </UFormField>
 
         <UFormField label="Destination" name="destination" class="field">
-          <USelectMenu v-model="selectTripForm.destination"           
-          :options = "planetOptions"
-          searchable
-          searchable-placeholder="Search destination..."
-          placeholder="Select destination"
-          class="custom-select"
-          :ui-menu="{ style: 'background: rgba(255, 255, 255, 0.95); color: #1e3a8a;' }" />
+          <USelectMenu v-model="selectTripForm.destination"
+            highlight
+            :items = "planetOptions"
+            placeholder="Select destination"
+            class="custom-select" 
+          </USelectMenu>
         </UFormField>
       </div>
 
@@ -150,55 +180,12 @@ html, body {
   height: 100%; 
 }
 
+
 .custom-select {
   border-radius: 0.5rem;
-  backdrop-filter: blur(8px);
-  min-width: 18rem ; 
-  min-height: 3rem ;
+  min-width: 11rem; 
+  min-height: 3rem;
   font-size: 1.125rem;
-}
-
-/* Add these styles */
-.custom-select :deep(.ui-select-menu-button) {
-  display: flex !important;
-  flex-direction: row-reverse !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
-}
-
-.custom-select :deep(.ui-trailing) {
-  order: 2 !important;
-  margin-left: auto !important;
-}
-
-.custom-select :deep(.ui-value) {
-  order: 1 !important;
-  flex-grow: 1 !important;
-}
-
-/* Icon rotation animation */
-.custom-select :deep(.ui-trailing-icon) {
-  transform: rotate(0deg) !important;
-  transition: transform 0.2s ease !important;
-}
-
-.custom-select[open] :deep(.ui-trailing-icon) {
-  transform: rotate(180deg) !important;
-}
-
-/* Force icon color */
-.custom-select :deep(.ui-trailing-icon) {
-  color: #a26626 !important;
-}
-
-.custom-select .ui-select-menu-options {
-  background: #f7fafc ;
-  border: 1px solid #cbd5e0 ;
-}
-
-.custom-select .ui-select-menu-option {
-  color: #9eafcc;
 }
 
 .field {
@@ -215,12 +202,6 @@ html, body {
   color: #9acef0;
 }
 
-.field select:focus,
-.field input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px #3b82f6; 
-  color: #9acef0;
-}
 
 .button-container {
   position: relative;
@@ -285,7 +266,6 @@ html, body {
   height: 50px;
   border: none;
   color: inherit;
-  background: none;
   cursor: pointer;
   display: inline-block;
   text-transform: uppercase;
