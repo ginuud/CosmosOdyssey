@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 builder.Configuration
     .AddJsonFile("appsettings.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
@@ -32,6 +34,15 @@ builder.Services.AddSwaggerGen();
 //     .AddScoped<IReservationRepository, ReservationRepo>()
 //     .AddScoped<IRouteInfoRepository, RouteInfoRepo>()
 
+builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+    {
+        builder
+        .SetIsOriginAllowed(_ => true)
+        .AllowCredentials()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    }));
+
 builder.Services.AddHttpClient<IDataService, DataService>();
 builder.Services.AddScoped<IDataService, DataService>();
 builder.Services.AddHostedService<DataSeeder>();
@@ -50,6 +61,8 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docke
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("MyPolicy");
 
 app.UseHttpsRedirection();
 app.MapControllers();

@@ -30,6 +30,15 @@ namespace REST.Controllers
             return await _context.RouteInfos.ToListAsync();
         }
 
+        // [HttpGet("{from}/{to}")]
+        // public async Task<ActionResult<IEnumerable<RouteInfo>>> SearchRoutes(string from, string to)
+        // {
+        //     var routeInfo = await _context.RouteInfos.Where(r => r.From.Name == from && r.To.Name == to).ToListAsync();
+
+        //     return Ok(routeInfo);
+        // }
+
+
         // GET: api/RouteInfos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RouteInfo>> GetRouteInfo(Guid id)
@@ -75,7 +84,7 @@ namespace REST.Controllers
             return NoContent();
         }
 
-        [HttpGet("getRoutes")]
+        [HttpGet("getRoutes/{from}/{to}")]
         public async Task<ActionResult<IEnumerable<RouteDto>>> GetRoutes(string from, string to)
         {
             var routes = await _context.RouteInfos

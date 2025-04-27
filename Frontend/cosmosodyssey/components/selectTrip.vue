@@ -8,61 +8,59 @@ const router = useRouter();
 const routeInfoStore = useRouteInfoStore();
 const planetStore = usePlanetStore();
 
+
 const selectTripForm = reactive({
-    origin: "",
-    destination: "",
+  origin: "",
+  destination: "",
+});
+
+const errors = reactive({
+  origin: null as string | null,
+  destination: null as string | null,
 });
 
 function resetForm() {
-    selectTripForm.origin = "";
-    selectTripForm.destination = "";
+  selectTripForm.origin = "";
+  selectTripForm.destination = "";
 }
 
-// const validateSelection = (state: Partial<typeof selectTripForm>): FormError[] => {
-//     const errors: FormError[] = [];
-//     if (state.origin && state.destination) {
-//         if (state.origin === state.destination) {
-//             errors.push({ path: "origin", message: "Origin and destination cannot be the same" });
-//         }
-//     }
-//     return errors;
-// };
+const validateSelection = (): FormError[] => {
+  errors.origin = null;
+  errors.destination = null;
 
-const validateSelection = (state: Partial<typeof selectTripForm>): FormError[] => {
-  const errors: FormError[] = [];
-  if (state.origin && state.destination) {
-    if (state.origin === state.destination) {
-      errors.push({ path: "origin", message: "Origin and destination cannot be the same" });
+  const validationErrors: FormError[] = [];
+
+  if (!selectTripForm.origin) {
+    errors.origin = "Origin is required.";
+    validationErrors.push({ path: "origin", message: errors.origin });
+  }
+
+  if (!selectTripForm.destination) {
+    errors.destination = "Destination is required.";
+    validationErrors.push({ path: "destination", message: errors.destination });
+  }
+
+  if (!errors.origin && !errors.destination) {
+    if (selectTripForm.origin === selectTripForm.destination) {
+      errors.destination = "Origin and destination cannot be the same.";
+      validationErrors.push({ path: "destination", message: errors.destination });
     }
   }
-  return errors;
+
+  return validationErrors;
 };
 
-// async function onSubmit(event: FormSubmitEvent<typeof selectTripForm>) { 
-//     event.preventDefault();
-//     const errors = validateSelection(selectTripForm);
-//     if (errors.length) {
-//         console.log("Validation errors:", errors);
-//         return;
-//     }
-//     const routeExists = await routeInfoStore.checkRouteExists(selectTripForm.origin, selectTripForm.destination);
-//   if (routeExists) {
-//     resetForm();
-//     router.push("/reservations"); 
-//   } else {
-//     alert("No route exists for the selected origin and destination."); 
-//   }
-// }
+const submitted = ref(false);
 
 const onSubmit = async (event?: Event) => {
-  if (event && "preventDefault" in event) {
-    event.preventDefault();
-  }
-  const errors = validateSelection(selectTripForm);
-  if (errors.length) {
-    console.log("Validation errors:", errors);
+  submitted.value = true;
+
+  const validationErrors = validateSelection();
+  if (validationErrors.length > 0) {
+    console.log("Validation errors:", validationErrors);
     return;
   }
+
   const routeExists = await routeInfoStore.checkRouteExists(selectTripForm.origin, selectTripForm.destination);
   if (routeExists) {
     resetForm();
@@ -114,7 +112,6 @@ const planetOptions = ref([
   {
     label: 'Pluto',
     value: 'Pluto',
-    color: '#05379c',
   }
 ]);
 
@@ -135,7 +132,6 @@ const animate = () => {
   <UForm 
   :validate="validateSelection" 
   :state="selectTripForm" 
-  class="space-y-4 p-6 bg-white rounded-2xl" 
   @submit="onSubmit">
     <div class="fields-and-button-container">
       <div class="fields-container">
@@ -143,19 +139,22 @@ const animate = () => {
           <USelectMenu 
           v-model="selectTripForm.origin" 
           :items = "planetOptions"
+          value-key="value"
           placeholder="Select origin"
           class="custom-select"
-          >
-          </USelectMenu>
+          />
+          <div v-if="submitted && errors.origin" class="error-message">{{ errors.origin }}</div>
         </UFormField>
 
         <UFormField label="Destination" name="destination" class="field">
           <USelectMenu v-model="selectTripForm.destination"
             highlight
             :items = "planetOptions"
+            value-key="value"
             placeholder="Select destination"
-            class="custom-select" 
-          </USelectMenu>
+            class="custom-select"
+            />
+            <div v-if="submitted && errors.destination" class="error-message">{{ errors.destination }}</div>
         </UFormField>
       </div>
 
@@ -174,6 +173,8 @@ const animate = () => {
 
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
 html, body {
   margin: 0;
   padding: 0;
@@ -183,9 +184,10 @@ html, body {
 
 .custom-select {
   border-radius: 0.5rem;
-  min-width: 11rem; 
+  min-width: 15rem; 
   min-height: 3rem;
-  font-size: 1.125rem;
+  font-size: 1.2rem;
+  font-family: "Orbitron", sans-serif;
 }
 
 .field {
@@ -200,6 +202,23 @@ html, body {
   padding: 0.5rem;
   font-family: sans-serif;
   color: #9acef0;
+  font-family: 'Times New Roman';
+  font-weight: 400;
+  font-size: 1.2rem;
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+}
+
+.flex.flex-col.min-h-0 {
+  padding: 0.1rem;
+}
+
+.p-1.isolate{
+  background-color: aliceblue;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-family: "Orbitron", sans-serif;
 }
 
 
@@ -208,7 +227,6 @@ html, body {
   margin-top: 10px;
   margin-bottom: 4px;
 }
-
 .btn {
   width: 56px;
   height: 56px;
@@ -302,5 +320,11 @@ html, body {
   display: flex;
   gap: 1.5rem;
   align-items: flex-end;
+}
+
+.error-message {
+  color: red;
+  font-size: 1rem;
+  margin-top: 0.25rem;
 }
 </style>

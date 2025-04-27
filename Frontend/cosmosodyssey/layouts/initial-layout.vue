@@ -13,6 +13,8 @@
 
 <style>
 
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
 .page-wrapper {
   height: 100vh;
   background-image: url('/assets/image.jpeg'); 
@@ -41,8 +43,13 @@ align-items: flex-start;
 
 .title {
 font-size: 4rem;
-font-weight: 600;
+font-weight: 500;
 color: #2d8fd0;
 margin: 0;
+font-family: "Orbitron", sans-serif;
+font-optical-sizing: auto;
+font-style: normal;
 }
+
+
 </style>
