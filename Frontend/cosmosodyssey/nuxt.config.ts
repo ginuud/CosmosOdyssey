@@ -3,6 +3,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-04-17',
   devtools: { enabled: true },
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxt/fonts', '@nuxt/image', '@nuxt/icon'],
+  components: {
+    dirs: [
+      '~/components'
+    ]
+  },
   imports: {
     autoImport: true,
     dirs: ["types/*.ts"],

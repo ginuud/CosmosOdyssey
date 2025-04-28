@@ -93,7 +93,6 @@ namespace REST.Controllers
                 .Where(r => r.From.Name == from && r.To.Name == to)
                 .ToListAsync();
 
-
             if (!routes.Any())
             {
                 return NotFound("No routes found for the given origin and destination.");

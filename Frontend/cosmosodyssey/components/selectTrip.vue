@@ -60,14 +60,21 @@ const onSubmit = async (event?: Event) => {
     console.log("Validation errors:", validationErrors);
     return;
   }
+  const selectedOrigin = selectTripForm.origin;
+  const selectedDestination = selectTripForm.destination;
 
-  const routeExists = await routeInfoStore.checkRouteExists(selectTripForm.origin, selectTripForm.destination);
+  const routeExists = await routeInfoStore.checkRouteExists(selectedOrigin, selectedDestination);
   if (routeExists) {
+    router.push({
+      path: "/reservations",
+      query: {
+        from: selectedOrigin,
+        to: selectedDestination
+      }
+    });  
     resetForm();
-    router.push("/reservations");
-  } else {
-    alert("No route exists for the selected origin and destination.");
-  }
+  } 
+  else {alert("No route exists for the selected origin and destination.");}
 };
 
 // const planetOptions = computed(() =>{

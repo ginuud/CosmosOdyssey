@@ -30,10 +30,11 @@ namespace REST.Mappers
                         RouteInfoId = route.Id,
                         From = route.From.Name,
                         To = route.To.Name,
+                        ProviderId = provider.Id,
                         CompanyName = provider.Company.Name,
                         Price = provider.Price,
                         Distance = route.Distance,
-                        TravelTime = (provider.FlightEnd - provider.FlightStart).TotalHours
+                        TravelTime = Math.Round((provider.FlightEnd - provider.FlightStart).TotalHours, 2)
                     });
                 }
             }

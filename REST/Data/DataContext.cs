@@ -22,7 +22,7 @@ namespace CosmosOdyssey.REST.Data
         public DbSet<Company> Companies { get; set; }
         public DbSet<Planet> Planets { get; set; }
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<Reservation>? Reservations { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,6 +33,7 @@ namespace CosmosOdyssey.REST.Data
             modelBuilder.Entity<PriceList>().ToTable("PriceLists");
             modelBuilder.Entity<Company>().ToTable("Companies");
             modelBuilder.Entity<Planet>().ToTable("Planets");
+            modelBuilder.Entity<Reservation>().ToTable("Reservations");
 
 
             modelBuilder.Entity<PriceList>(entity =>
@@ -105,6 +106,8 @@ namespace CosmosOdyssey.REST.Data
                 entity.HasKey(p => p.Id);
                 entity.Property(p => p.Id).ValueGeneratedNever();
             });
+
+            modelBuilder.Entity<Reservation>().Property(x => x.Id).ValueGeneratedOnAdd();
         }
 
         public class DesignTimeDataContextFactory : IDesignTimeDbContextFactory<DataContext>
