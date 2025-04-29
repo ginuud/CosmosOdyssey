@@ -14,17 +14,15 @@ export const useReservationStore = defineStore("reservationStore", () => {
 
   const makeReservation = async (reservation: Reservation) => { 
     try {
-      const response = await fetch(`${config.public.apiBase}Reservations`,{
+      const response = await $fetch(`${config.public.apiBase}Reservations`,{
         method: 'POST',
         body: JSON.stringify(reservation),
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         }
       });
-      if(response) {
       reservations.value.push(response);
       return response;
-      } 
     }
     catch (error) {
       console.error("Error making reservation:", error);

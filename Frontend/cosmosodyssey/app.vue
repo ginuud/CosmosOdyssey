@@ -4,9 +4,10 @@ import { UApp } from '#components';
 </script>
 
 <template>
-  <UApp>
+    <UApp >
     <NuxtLayout >
       <NuxtPage />
     </NuxtLayout>
-  </UApp>
+    </UApp>
+    <div id="modal"></div>
 </template>

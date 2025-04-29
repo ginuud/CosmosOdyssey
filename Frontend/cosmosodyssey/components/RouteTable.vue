@@ -217,6 +217,7 @@ const columns: TableColumn<Route>[] = [
   overflow: hidden;
   box-shadow: 0 0 40px rgba(90, 200, 250, 0.1);
   backdrop-filter: blur(5px);
+  
 }
 
 .route-table-container::before {

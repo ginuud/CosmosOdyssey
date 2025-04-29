@@ -4,6 +4,7 @@ import { usePlanetStore } from "@/stores/planetStore";
 import { ref, computed, reactive } from "vue";
 import { useRouteInfoStore } from "~/stores/RouteInfoStore"
 import { useRouter } from "vue-router";
+import { UFormField } from "#components";
 const router = useRouter();
 const routeInfoStore = useRouteInfoStore();
 const planetStore = usePlanetStore();
@@ -191,15 +192,14 @@ html, body {
 
 .custom-select {
   border-radius: 0.5rem;
-  min-width: 15rem; 
-  min-height: 3rem;
+  min-width: 10rem; 
   font-size: 1.2rem;
   font-family: "Orbitron", sans-serif;
+  color: #9acef0;
 }
 
 .field {
   backdrop-filter: blur(8px);
-  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -207,26 +207,25 @@ html, body {
   border: 1px solid #9acef0; 
   border-radius: 0.5rem;
   padding: 0.5rem;
-  font-family: sans-serif;
   color: #9acef0;
-  font-family: 'Times New Roman';
   font-weight: 400;
   font-size: 1.2rem;
   margin: 0;
   font-family: "Orbitron", sans-serif;
 }
 
+
 .flex.flex-col.min-h-0 {
   padding: 0.1rem;
 }
 
 .p-1.isolate{
-  background-color: aliceblue;
   border-radius: 0.5rem;
   padding: 0.5rem;
-  font-size: 1rem;
+  font-size: 0,5rem;
   font-family: "Orbitron", sans-serif;
 }
+
 
 
 .button-container {
@@ -301,11 +300,8 @@ html, body {
   -webkit-transition: all 0.3s;
   -moz-transition: all 0.3s;
   transition: all 0.3s;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
+
+
 }
 
 .around:after {

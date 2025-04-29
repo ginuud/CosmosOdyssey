@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="container">
       <h1 class="title"> Routes from {{ route.query.from }} to {{ route.query.to }}</h1>
 
@@ -107,4 +107,15 @@ animation: pulsate 1.5s ease-out infinite;
 50% { transform: scale(1.2); opacity: 1; }
 100% { transform: scale(0.8); opacity: 0.8; }
 }
-</style>
+</style> -->
+
+<template>
+  <RouteList />
+</template>
+
+<script setup lang="ts">
+
+definePageMeta({
+  layout: "reservation-layout",
+});
+</script>
