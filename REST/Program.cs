@@ -2,19 +2,27 @@ using CosmosOdyssey.REST.Data;
 using CosmosOdyssey.REST.Models;
 using CosmosOdyssey.REST.Services;
 using Microsoft.EntityFrameworkCore;
+using REST.Data.Repos;
+using REST.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 
 builder.Configuration
     .AddJsonFile("appsettings.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
 
-builder.Services.AddDbContext<DataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services
+    .AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")))
+    .AddScoped<IReservationRepository, ReservationRepo>();
+//     .AddScoped<ICompanyRepository, CompanyRepo>()
+//     .AddScoped<ICustomerRepository, CustomerRepo>()
+//     .AddScoped<ILegRepository, LegRepo>()
+//     .AddScoped<IPlanetRepository, PlanetRepo>()
+//     .AddScoped<IPriceListRepository, PriceListRepo>()
+//     .AddScoped<IProviderRepository, ProviderRepo>()
+//     .AddScoped<IRouteInfoRepository, RouteInfoRepo>()
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
@@ -24,15 +32,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-//     .AddScoped<ICompanyRepository, CompanyRepo>()
-//     .AddScoped<ICustomerRepository, CustomerRepo>()
-//     .AddScoped<ILegRepository, LegRepo>()
-//     .AddScoped<IPlanetRepository, PlanetRepo>()
-//     .AddScoped<IPriceListRepository, PriceListRepo>()
-//     .AddScoped<IProviderRepository, ProviderRepo>()
-//     .AddScoped<IReservationRepository, ReservationRepo>()
-//     .AddScoped<IRouteInfoRepository, RouteInfoRepo>()
+
 
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
     {

@@ -29,10 +29,19 @@ namespace REST.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var reservationModel = reservationDto.ToReservationFromCreate();
-            await repo.CreateAsync(reservationModel);
+            try
+            {
+                var reservationModel = reservationDto.ToReservationFromCreate();
+                await repo.CreateAsync(reservationModel);
 
-            return CreatedAtAction(nameof(Create), new { reservationModel.Id }, reservationModel.ToReservationDto());
+                return CreatedAtAction(nameof(Create), new { id = reservationModel.Id }, reservationModel.ToReservationDto());
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.Error.WriteLine($"Error creating reservation: {ex.Message}");
+                return StatusCode(500, "An error occurred while creating the reservation.");
+            }
         }
 
     }
