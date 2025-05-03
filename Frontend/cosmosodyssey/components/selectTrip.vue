@@ -118,8 +118,12 @@ const planetOptions = ref([
     value: 'Neptune',
   },
   {
-    label: 'Pluto',
-    value: 'Pluto',
+    label: 'Uranus',
+    value: 'Uranus',
+  },
+  {
+    label: 'Mercury',
+    value: 'Mercury',
   }
 ]);
 
