@@ -1,9 +1,11 @@
 using CosmosOdyssey.REST.Data;
+using CosmosOdyssey.REST.Interfaces;
 using CosmosOdyssey.REST.Models;
 using CosmosOdyssey.REST.Services;
 using Microsoft.EntityFrameworkCore;
 using REST.Data.Repos;
 using REST.Interfaces;
+using REST.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +17,8 @@ builder.Configuration
 
 builder.Services
     .AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")))
-    .AddScoped<IReservationRepository, ReservationRepo>();
+    .AddScoped<IReservationRepository, ReservationRepo>()
+    .AddScoped<IRouteFinderService, RouteFinderService>();
 //     .AddScoped<ICompanyRepository, CompanyRepo>()
 //     .AddScoped<ICustomerRepository, CustomerRepo>()
 //     .AddScoped<ILegRepository, LegRepo>()
@@ -45,6 +48,7 @@ builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
 
 builder.Services.AddHttpClient<IDataService, DataService>();
 builder.Services.AddScoped<IDataService, DataService>();
+builder.Services.AddScoped<IRouteFinderService, RouteFinderService>();
 builder.Services.AddHostedService<DataSeeder>();
 builder.Services.AddHostedService<TravelPriceSyncService>();
 

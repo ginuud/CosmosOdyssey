@@ -7,7 +7,7 @@ export const useRouteInfoStore = defineStore("routeInfoStore", () => {
 
   const checkRouteExists = async (origin: string, destination: string): Promise<boolean> => {
     try {
-      const response = await fetch(`${config.public.apiBase}RouteInfos/getRoutes/${origin}/${destination}`);
+      const response = await fetch(`${config.public.apiBase}Routes/search?fromPlanet=${origin}&toPlanet=${destination}`);
       if (!response.ok) {
         routes.value = []; 
         return false; 

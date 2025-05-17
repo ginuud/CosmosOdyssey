@@ -34,6 +34,14 @@ namespace CosmosOdyssey.REST.Data
                 {
                     Console.WriteLine("Database connection successful");
 
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"RouteInfos\" DROP CONSTRAINT IF EXISTS \"FK_RouteInfos_Planets_FromId\";");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"RouteInfos\" DROP CONSTRAINT IF EXISTS \"FK_RouteInfos_Planets_ToId\";");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Providers\" DROP CONSTRAINT IF EXISTS \"FK_Providers_Legs_LegId\";");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Legs\" DROP CONSTRAINT IF EXISTS \"FK_Legs_RouteInfos_RouteInfoId\";");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Legs\" DROP CONSTRAINT IF EXISTS \"FK_Legs_PriceLists_PriceListId\";");
+                    await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"Providers\" DROP CONSTRAINT IF EXISTS \"FK_Providers_Companies_CompanyId\";");
+
+
                     await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"RouteInfos\" ALTER COLUMN \"Id\" TYPE uuid USING \"Id\"::uuid;");
                     await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"RouteInfos\" ALTER COLUMN \"FromId\" TYPE uuid USING \"FromId\"::uuid;");
                     await context.Database.ExecuteSqlRawAsync("ALTER TABLE \"RouteInfos\" ALTER COLUMN \"ToId\" TYPE uuid USING \"ToId\"::uuid;");
