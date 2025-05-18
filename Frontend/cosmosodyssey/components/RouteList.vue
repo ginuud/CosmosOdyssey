@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="mb-4 table-container flex items-center justify-between">
     <h1 class="title"> Routes from {{ route.query.from }} to {{ route.query.to }}</h1>
 
@@ -160,6 +160,7 @@ const submitReservation = async () => {
       id: reservationStore.generateId(),
       firstName: firstName.value,
       lastName: lastName.value,
+      routes: routeInfoStore.routes, 
       providerId: selectedProviderId.value!,
     });
     isReservationModalOpen.value = false;
@@ -290,4 +291,4 @@ const validate = () => {
   text-align: left;
   font-family: 'Orbitron', sans-serif;
 }
-</style>
+</style> -->

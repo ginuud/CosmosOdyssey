@@ -2,25 +2,32 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useRouteInfoStore = defineStore("routeInfoStore", () => {
-  const routes = ref<Route[]>([]);
+  const routeInfos = ref<RouteInfo[]>([]);
   const config = useRuntimeConfig();
 
-  const checkRouteExists = async (origin: string, destination: string): Promise<boolean> => {
+  const getRouteInfos = async () => {
     try {
-      const response = await fetch(`${config.public.apiBase}Routes/search?fromPlanet=${origin}&toPlanet=${destination}`);
-      if (!response.ok) {
-        routes.value = []; 
-        return false; 
+      const data = await $fetch(`${config.public.apiBase}RouteInfos`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+        });
+        if (!data || !Array.isArray(data)) {
+        routeInfos.value = [];
+        return false;
       }
-      const data = await response.json();
-      routes.value = data; 
-      return data.length > 0; 
+
+      routeInfos.value = data;
+      return data.length > 0;
     } catch (error) {
       console.error("Error checking route:", error);
-      routes.value = [];
-      return false; 
+      routeInfos.value = [];
+      return false;
     }
   };
 
-  return { routes, checkRouteExists };
+  return { routeInfos, getRouteInfos };
 });
+
+ 

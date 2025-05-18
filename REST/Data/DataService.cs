@@ -117,24 +117,6 @@ namespace CosmosOdyssey.REST.Data
                 return planet;
             }
         }
-        // public class JsonDateTimeConverter : JsonConverter<DateTime>
-        // {
-        //     public override DateTime Read(
-        //         ref Utf8JsonReader reader,
-        //         Type typeToConvert,
-        //         JsonSerializerOptions options)
-        //     {
-        //         return DateTime.Parse(reader.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-        //     }
-
-        //     public override void Write(
-        //         Utf8JsonWriter writer,
-        //         DateTime value,
-        //         JsonSerializerOptions options)
-        //     {
-        //         writer.WriteStringValue(value.ToString("O"));
-        //     }
-        // }
         public class JsonGuidConverter : JsonConverter<Guid>
         {
             public override Guid Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options)

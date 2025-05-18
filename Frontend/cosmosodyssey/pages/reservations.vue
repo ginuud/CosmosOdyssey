@@ -110,7 +110,7 @@ animation: pulsate 1.5s ease-out infinite;
 </style> -->
 
 <template>
-  <RouteList />
+  <Routes />
 </template>
 
 <script setup lang="ts">

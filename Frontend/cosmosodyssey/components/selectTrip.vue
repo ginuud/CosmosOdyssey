@@ -2,11 +2,11 @@
 import type { FormError, FormSubmitEvent } from "#ui/types";
 import { usePlanetStore } from "@/stores/planetStore";
 import { ref, computed, reactive } from "vue";
-import { useRouteInfoStore } from "~/stores/RouteInfoStore"
+import { useRouteStore } from "~/stores/RouteStore"
 import { useRouter } from "vue-router";
 import { UFormField } from "#components";
 const router = useRouter();
-const routeInfoStore = useRouteInfoStore();
+const routeStore = useRouteStore();
 const planetStore = usePlanetStore();
 
 
@@ -64,7 +64,7 @@ const onSubmit = async (event?: Event) => {
   const selectedOrigin = selectTripForm.origin;
   const selectedDestination = selectTripForm.destination;
 
-  const routeExists = await routeInfoStore.checkRouteExists(selectedOrigin, selectedDestination);
+  const routeExists = await routeStore.checkRouteExists(selectedOrigin, selectedDestination);
   if (routeExists) {
     router.push({
       path: "/reservations",
@@ -72,10 +72,10 @@ const onSubmit = async (event?: Event) => {
         from: selectedOrigin,
         to: selectedDestination
       }
-    });  
+    });
     resetForm();
-  } 
-  else {alert("No route exists for the selected origin and destination.");}
+  }
+  else { alert("No route exists for the selected origin and destination."); }
 };
 
 // const planetOptions = computed(() =>{
@@ -141,41 +141,29 @@ const animate = () => {
 </script>
 
 <template>
-  <UForm 
-  :validate="validateSelection" 
-  :state="selectTripForm" 
-  @submit="onSubmit">
+  <UForm :validate="validateSelection" :state="selectTripForm" @submit="onSubmit">
     <div class="fields-and-button-container">
       <div class="fields-container">
         <UFormField label="Origin" name="origin" class="field">
-          <USelectMenu 
-          v-model="selectTripForm.origin" 
-          :items = "planetOptions"
-          value-key="value"
-          placeholder="Select origin"
-          class="custom-select"
-          />
+          <USelectMenu v-model="selectTripForm.origin" :items="planetOptions" value-key="value"
+            placeholder="Select origin" class="custom-select" />
           <div v-if="submitted && errors.origin" class="error-message">{{ errors.origin }}</div>
         </UFormField>
 
         <UFormField label="Destination" name="destination" class="field">
-          <USelectMenu v-model="selectTripForm.destination"
-            highlight
-            :items = "planetOptions"
-            value-key="value"
-            placeholder="Select destination"
-            class="custom-select"
-            />
-            <div v-if="submitted && errors.destination" class="error-message">{{ errors.destination }}</div>
+          <USelectMenu v-model="selectTripForm.destination" highlight :items="planetOptions" value-key="value"
+            placeholder="Select destination" class="custom-select" />
+          <div v-if="submitted && errors.destination" class="error-message">{{ errors.destination }}</div>
         </UFormField>
       </div>
 
       <div class="button-container">
-        <button class="btn btn-inside btn-boarder"  @click="onSubmit">
+        <button class="btn btn-inside btn-boarder" @click="onSubmit">
           <img src="https://i.cloudup.com/gBzAn-oW_S-2000x2000.png" width="35px" height="35px" id="plane" />
         </button>
         <div class="bg">
-          <img src="https://i.cloudup.com/2ZAX3hVsBE-3000x3000.png" id="bg" width="32px" height="32px" style="opacity:0;" />
+          <img src="https://i.cloudup.com/2ZAX3hVsBE-3000x3000.png" id="bg" width="32px" height="32px"
+            style="opacity:0;" />
         </div>
         <div class="around around-boarder" @click="animate"></div>
       </div>
@@ -187,16 +175,17 @@ const animate = () => {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
-  height: 100%; 
+  height: 100%;
 }
 
 
 .custom-select {
   border-radius: 0.5rem;
-  min-width: 10rem; 
+  min-width: 10rem;
   font-size: 1.2rem;
   font-family: "Orbitron", sans-serif;
   color: #9acef0;
@@ -208,7 +197,7 @@ html, body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #9acef0; 
+  border: 1px solid #9acef0;
   border-radius: 0.5rem;
   padding: 0.5rem;
   color: #9acef0;
@@ -223,10 +212,10 @@ html, body {
   padding: 0.1rem;
 }
 
-.p-1.isolate{
+.p-1.isolate {
   border-radius: 0.5rem;
   padding: 0.5rem;
-  font-size: 0,5rem;
+  font-size: 0, 5rem;
   font-family: "Orbitron", sans-serif;
 }
 
@@ -237,6 +226,7 @@ html, body {
   margin-top: 10px;
   margin-bottom: 4px;
 }
+
 .btn {
   width: 56px;
   height: 56px;
@@ -320,7 +310,7 @@ html, body {
 
 .fields-container {
   display: flex;
-  gap: 1.5rem; 
+  gap: 1.5rem;
 }
 
 .fields-and-button-container {

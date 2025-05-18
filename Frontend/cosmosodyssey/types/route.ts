@@ -1,11 +1,11 @@
 export type Guid = string;
 
 export type Route = {
-    routeInfoId: Guid;
+    routeInfoIds: Guid[];
     from: string;
     to: string;
-    providerId: Guid;
-    companyName: string;
+    providerIds: Guid[];
+    companyNames: string[];
     price: number;
     distance: number;
     travelTime: number;

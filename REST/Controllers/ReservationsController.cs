@@ -1,48 +1,48 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CosmosOdyssey.REST.Data;
-using CosmosOdyssey.REST.Models;
-using CosmosOdyssey.REST.Dtos;
-using REST.Interfaces;
-using REST.Mappers;
+// using System;
+// using System.Collections.Generic;
+// using System.Linq;
+// using System.Threading.Tasks;
+// using Microsoft.AspNetCore.Mvc;
+// using Microsoft.EntityFrameworkCore;
+// using CosmosOdyssey.REST.Data;
+// using CosmosOdyssey.REST.Models;
+// using CosmosOdyssey.REST.Dtos;
+// using REST.Interfaces;
+// using REST.Mappers;
 
-namespace REST.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ReservationsController : ControllerBase
-    {
-        private readonly IReservationRepository repo;
+// namespace REST.Controllers
+// {
+//     [Route("api/[controller]")]
+//     [ApiController]
+//     public class ReservationsController : ControllerBase
+//     {
+//         private readonly IReservationRepository repo;
 
-        public ReservationsController(IReservationRepository reservationsRepo)
-        {
-            repo = reservationsRepo;
-        }
+//         public ReservationsController(IReservationRepository reservationsRepo)
+//         {
+//             repo = reservationsRepo;
+//         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateReservationDto reservationDto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+//         [HttpPost]
+//         public async Task<IActionResult> Create([FromBody] CreateReservationDto reservationDto)
+//         {
+//             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            try
-            {
-                var reservationModel = reservationDto.ToReservationFromCreate();
-                await repo.CreateAsync(reservationModel);
+//             try
+//             {
+//                 var reservationModel = reservationDto.ToReservationFromCreate();
+//                 await repo.CreateAsync(reservationModel);
 
-                return CreatedAtAction(nameof(Create), new { id = reservationModel.Id }, reservationModel.ToReservationDto());
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                Console.Error.WriteLine($"Error creating reservation: {ex.Message}");
-                return StatusCode(500, "An error occurred while creating the reservation.");
-            }
-        }
+//                 return CreatedAtAction(nameof(Create), new { id = reservationModel.Id }, reservationModel.ToReservationDto());
+//             }
+//             catch (Exception ex)
+//             {
+//                 // Log the exception
+//                 Console.Error.WriteLine($"Error creating reservation: {ex.Message}");
+//                 return StatusCode(500, "An error occurred while creating the reservation.");
+//             }
+//         }
 
-    }
-}
+//     }
+// }
