@@ -10,5 +10,8 @@ namespace REST.Interfaces
     public interface IReservationRepository
     {
         Task<Reservation> CreateAsync(Reservation reservationModel);
+        Task<List<RouteInfo>> GetRouteInfosByIdsAsync(List<Guid> routeInfoIds);
+
+        Task<Reservation?> GetByIdAsync(int id);
     }
 }

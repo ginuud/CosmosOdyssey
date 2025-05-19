@@ -1,34 +1,34 @@
-// import { defineStore } from "pinia";
-// import { ref } from "vue";
-// import type { Reservation } from "~/types/reservation";
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import type { Reservation } from "~/types/reservation";
 
-// export const useReservationStore = defineStore("reservationStore", () => {
-//     let currentId: number = 0;
+export const useReservationStore = defineStore("reservationStore", () => {
+    let currentId: number = 0;
 
-//   function generateId(): number {
-//     return ++currentId;
-//   }
+  function generateId(): number {
+    return ++currentId;
+  }
 
-//   const reservations = ref<Reservation[]>([]);
-//   const config = useRuntimeConfig();
+  const reservations = ref<Reservation[]>([]);
+  const config = useRuntimeConfig();
 
-//   const makeReservation = async (reservation: Reservation) => { 
-//     try {
-//       const response = await $fetch(`${config.public.apiBase}Reservations`,{
-//         method: 'POST',
-//         body: JSON.stringify(reservation),
-//         headers: {
-//           'Content-Type': 'application/json'
-//         }
-//       });
-//       reservations.value.push(response);
-//       return response;
-//     }
-//     catch (error) {
-//       console.error("Error making reservation:", error);
-//       throw error; 
-//     }
-//   };
+  const makeReservation = async (reservation: Reservation) => { 
+    try {
+      const response = await $fetch(`${config.public.apiBase}Reservations`,{
+        method: 'POST',
+        body: JSON.stringify(reservation),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      reservations.value.push(response);
+      return response;
+    }
+    catch (error) {
+      console.error("Error making reservation:", error);
+      throw error; 
+    }
+  };
 
-//   return { reservations, makeReservation, generateId };
-// });
+  return { reservations, makeReservation, generateId };
+});

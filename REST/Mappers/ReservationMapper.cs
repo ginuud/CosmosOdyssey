@@ -1,45 +1,42 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
-// using System.Threading.Tasks;
-// using CosmosOdyssey.REST.Models;
-// using CosmosOdyssey.REST.Data;
-// using CosmosOdyssey.REST.Dtos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CosmosOdyssey.REST.Models;
+using CosmosOdyssey.REST.Data;
+using CosmosOdyssey.REST.Dtos;
 
-// namespace REST.Mappers
-// {
-//     public static class ReservationMapper
-//     {
-//         public static Reservation ToReservationFromCreate(this CreateReservationDto reservationDto)
-//         {
-//             return new Reservation
-//             {
-//                 FirstName = reservationDto.FirstName,
-//                 LastName = reservationDto.LastName,
-//                 ProviderId = reservationDto.ProviderId
-//             };
-//         }
+namespace REST.Mappers
+{
+    public static class ReservationMapper
+    {
+        public static Reservation ToReservationFromCreate(this CreateReservationDto reservationDto, List<RouteInfo> routeInfos)
+        {
+            return new Reservation
+            {
+                FirstName = reservationDto.FirstName,
+                LastName = reservationDto.LastName,
+                Routes = routeInfos,
+                RouteInfoIds = reservationDto.RouteIds ?? new List<Guid>(),
+                TotalQuotedPrice = reservationDto.TotalQuotedPrice,
+                TotalQuotedTravelTime = reservationDto.TotalQuotedTravelTime,
+                TransportationCompanyNames = reservationDto.TransportationCompanyNames ?? new List<string>(),
+            };
+        }
 
-//         public static ReservationDto ToReservationDto(this Reservation reservationrModel)
-//         {
-//             return new ReservationDto
-//             {
-//                 Id = reservationrModel.Id,
-//                 FirstName = reservationrModel.FirstName,
-//                 LastName = reservationrModel.LastName,
-//                 Routes = reservationrModel.Routes.Select(r => new RouteDto
-//                 {
-//                     Id = r.Id,
-//                     FlightStart = r.FlightStart,
-//                     FlightEnd = r.FlightEnd,
-//                     Price = r.Price,
-//                     LegId = r.LegId,
-//                     CompanyName = reservationrModel.CompanyName
-//                 }).ToList(),
+        public static ReservationDto ToReservationDto(this Reservation reservationModel)
+        {
+            return new ReservationDto
+            {
+                Id = reservationModel.Id,
+                FirstName = reservationModel.FirstName,
+                LastName = reservationModel.LastName,
+                Routes = reservationModel.Routes.Select(r => r.ToRouteInfoDto()).ToList(),
+                TotalQuotedPrice = reservationModel.TotalQuotedPrice,
+                TotalQuotedTravelTime = reservationModel.TotalQuotedTravelTime,
+                TransportationCompanyNames = reservationModel.TransportationCompanyNames,
 
-//                 ProviderId = reservationrModel.ProviderId,
-
-//             };
-//         }
-//     }
-// }
+            };
+        }
+    }
+}

@@ -7,9 +7,9 @@ export type Reservation = {
     id: number;
     firstName: string;
     lastName: string;
-    routes: Route[];
-    routeInfoIds: Guid[];
+    // routes: RouteInfo[];
+    routeIds: Guid[];
     totalQuotedPrice: number;
     totalQuotedTravelTime: number;
-    transportationCompanyName: string;
+    transportationCompanyNames: string[];
 }

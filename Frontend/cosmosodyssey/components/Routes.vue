@@ -33,7 +33,8 @@
                 No trips where found.
             </div>
 
-            <div v-for="route in filteredAndSortedRoutes" :key="route.routeInfoId" class="route-card">
+            <div v-for="route in filteredAndSortedRoutes" :key="`${route.price}-${route.travelTime}`"
+                class="route-card">
                 <div class="route-header">
                     <h2>{{ route.from }} → {{ route.to }}</h2>
                     <span class="price">{{ route.price }}$</span>
@@ -63,37 +64,39 @@
         <div v-if="showReservationModal" class="modal">
             <div class="modal-content">
                 <span class="close-button" @click="showReservationModal = false">&times;</span>
-                <h2>Broneeri reis</h2>
+                <h2>Plan a trip</h2>
                 <div class="selected-route-info">
-                    <h3>{{ selectedRoute.from }} → {{ selectedRoute.to }}</h3>
-                    <p>{{ selectedRoute.companyNames }} | {{ selectedRoute.price }}€ | {{
-                        formatTravelTime(selectedRoute.travelTime) }}</p>
+                    <h3>{{ selectedRoute?.from }} → {{ selectedRoute?.to }}</h3>
+                    <p>{{ selectedRoute?.companyNames?.join(', ') }} | {{ selectedRoute?.price }}€ | {{
+                        formatTravelTime(selectedRoute?.travelTime ?? 0) }}</p>
                 </div>
 
                 <form @submit.prevent="submitReservation">
                     <div class="form-group">
-                        <label for="firstName">Eesnimi:</label>
+                        <label for="firstName">First name:</label>
                         <input type="text" id="firstName" v-model="reservation.firstName" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="lastName">Perekonnanimi:</label>
+                        <label for="lastName">Last name:</label>
                         <input type="text" id="lastName" v-model="reservation.lastName" required>
                     </div>
 
-                    <button type="submit" class="submit-button">Kinnita broneering</button>
+                    <button type="submit" class="submit-button">Make reservation</button>
                 </form>
             </div>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRoute } from 'vue-router';
 import { useRouteStore } from '~/stores/RouteStore';
 import { useRouteInfoStore } from '~/stores/RouteInfoStore';
+import { useReservationStore } from '~/stores/reservationStore';
+import type { Route } from '~/types/route';
 
 
 const route = useRoute();
@@ -102,6 +105,7 @@ const routeStore = useRouteStore();
 const routeInfoStore = useRouteInfoStore();
 const { routes } = storeToRefs(routeStore);
 const { routeInfos } = storeToRefs(routeInfoStore);
+const reservationStore = useReservationStore();
 
 
 const filters = ref({
@@ -110,10 +114,12 @@ const filters = ref({
 const sortBy = ref("price");
 const sortDirection = ref("asc");
 const showReservationModal = ref(false);
+const selectedRoute = ref<Route | null>(null);
 const reservation = ref({
     firstName: "",
     lastName: ""
 });
+
 
 const uniqueCompanies = computed(() => {
     return [...new Set(routes.value.flatMap(route => route.companyNames))];
@@ -131,8 +137,8 @@ const filteredAndSortedRoutes = computed(() => {
 
     result.sort((a, b) => {
         let modifier = sortDirection.value === "asc" ? 1 : -1;
-        const aValue = a[sortBy.value];
-        const bValue = b[sortBy.value];
+        const aValue = a[sortBy.value as keyof Route];
+        const bValue = b[sortBy.value as keyof Route];
 
         if (typeof aValue === 'number' && typeof bValue === 'number') {
             return (aValue - bValue) * modifier;
@@ -143,28 +149,65 @@ const filteredAndSortedRoutes = computed(() => {
     return result;
 });
 
-const formatTravelTime = (hours) => {
+const formatTravelTime = (hours: number) => {
     const totalMinutes = Math.round(hours * 60);
     const hoursPart = Math.floor(totalMinutes / 60);
     const minutesPart = totalMinutes % 60;
     return `${hoursPart}h ${minutesPart}min`;
 };
 
-const openReservationModal = (route) => {
+const openReservationModal = (route: Route) => {
     selectedRoute.value = route;
     showReservationModal.value = true;
     reservation.value = { firstName: "", lastName: "" };
 };
 
-const submitReservation = () => {
+const submitReservation = async () => {
+    if (!validate()) return;
+    try {
+        await reservationStore.makeReservation({
+            id: reservationStore.generateId(),
+            firstName: reservation.value.firstName.trim(),
+            lastName: reservation.value.lastName.trim(),
+            routeIds: selectedRoute.value?.routeInfoIds ?? [],
+            // routes: (selectedRoute.value?.routeInfoIds ?? [])
+            //     .map(id => routeInfos.value.find(info => info.id === id))
+            //     .filter((info): info is RouteInfo => info !== undefined),
+            totalQuotedPrice: selectedRoute.value?.price ?? 0,
+            totalQuotedTravelTime: selectedRoute.value?.travelTime ?? 0,
+            transportationCompanyNames: selectedRoute.value?.companyNames ?? []
 
+        });
+        showReservationModal.value = false;
+        reservation.value.firstName = "";
+        reservation.value.lastName = "";
+        selectedRoute.value = null;
+    } catch (error) {
+        console.error("Error making reservation:", error);
+    }
 };
+
+const validate = () => {
+    let isValid = true;
+    errors.firstName = reservation.value.firstName.trim() ? null : "Required";
+    errors.lastName = reservation.value.lastName.trim() ? null : "Required";
+
+    if (!reservation.value.firstName.trim() || !reservation.value.lastName.trim()) {
+        isValid = false;
+    }
+    return isValid;
+};
+
+const errors = reactive<{ firstName: string | null, lastName: string | null }>({
+    firstName: null,
+    lastName: null,
+});
 
 onMounted(async () => {
     if (routes.value.length === 0) {
         const exists = await routeStore.checkRouteExists(
-            route.query.from,
-            route.query.to
+            route.query.from as string,
+            route.query.to as string
         );
         if (!exists) {
             return router.push('/')

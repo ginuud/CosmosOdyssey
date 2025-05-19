@@ -10,9 +10,10 @@ namespace CosmosOdyssey.REST.Models
         public int Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public Guid ProviderId { get; set; }
-        // public decimal? TotalQuotedPrice { get; set; }
-        // public decimal? TotalQuotedTravelTime { get; set; }
-        // public string? TransportationCompanyName { get; set; }
+        public List<RouteInfo> Routes { get; set; } = new List<RouteInfo>();
+        public List<Guid> RouteInfoIds { get; set; } = new List<Guid>();
+        public decimal? TotalQuotedPrice { get; set; }
+        public decimal? TotalQuotedTravelTime { get; set; }
+        public List<string> TransportationCompanyNames { get; set; } = new List<string>();
     }
 }
