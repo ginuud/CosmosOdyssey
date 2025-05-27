@@ -1,5 +1,4 @@
-import type { Leg } from './leg';
-import type { Company } from './company';
+import type { RouteInfo } from './routeInfo';
 
 export type Guid = string;
 
@@ -8,7 +7,7 @@ export type Reservation = {
     firstName: string;
     lastName: string;
     // routes: RouteInfo[];
-    routeIds: Guid[];
+    routeInfoIds: Guid[];
     totalQuotedPrice: number;
     totalQuotedTravelTime: number;
     transportationCompanyNames: string[];

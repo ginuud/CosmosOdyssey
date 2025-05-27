@@ -44,14 +44,14 @@ namespace REST.Controllers
 
             try
             {
-                // var routeInfoIds = reservationDto.Routes.Select(r => r.Id).ToList();
-                // var routeInfos = await repo.GetRouteInfosByIdsAsync(routeInfoIds);
-                var routeInfos = await repo.GetRouteInfosByIdsAsync(reservationDto.RouteIds);
+                var routeInfoIds = reservationDto.RouteInfoIds;
+                var routeInfos = await repo.GetRouteInfosByIdsAsync(routeInfoIds);
+                //var routeInfos = await repo.GetRouteInfosByIdsAsync(reservationDto.RouteInfoIds);
 
-                // if (routeInfos.Count != routeInfoIds.Count)
-                // {
-                //     return BadRequest("One or more RouteInfo IDs are invalid.");
-                // }
+                if (routeInfos.Count != reservationDto.RouteInfoIds.Count)
+                {
+                    return BadRequest("One or more RouteInfo IDs are invalid.");
+                }
 
                 var reservationModel = reservationDto.ToReservationFromCreate(routeInfos);
                 var result = await repo.CreateAsync(reservationModel);
@@ -64,6 +64,14 @@ namespace REST.Controllers
                 return StatusCode(500, "An error occurred while creating the reservation.");
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllReservations()
+        {
+            var reservations = await repo.GetAllAsync();
+            var dto = reservations.Select(r => r.ToReservationDto());
+            return Ok(dto);
+        }
+
 
     }
 }

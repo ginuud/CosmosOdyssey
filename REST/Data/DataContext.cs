@@ -107,6 +107,11 @@ namespace CosmosOdyssey.REST.Data
                 entity.Property(p => p.Id).ValueGeneratedNever();
             });
 
+            modelBuilder.Entity<Reservation>()
+                .HasMany(re => re.Routes)
+                .WithOne(r => r.Reservation)
+                .HasForeignKey(r => r.ReservationId);
+
             modelBuilder.Entity<Reservation>().Property(x => x.Id).ValueGeneratedOnAdd();
         }
 

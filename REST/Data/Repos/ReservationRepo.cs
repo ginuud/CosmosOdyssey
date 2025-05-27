@@ -15,6 +15,9 @@ namespace REST.Data.Repos
             {
                 var dbReservation = await _context.Reservations
                     .Include(r => r.Routes)
+                    .ThenInclude(ro => ro.From)
+                    .Include(r => r.Routes)
+                    .ThenInclude(ro => ro.To)
                     .FirstOrDefaultAsync(r => r.Id == id);
 
                 return dbReservation;
@@ -31,6 +34,12 @@ namespace REST.Data.Repos
             try
             {
                 await _context.Reservations.AddAsync(reservation);
+                await _context.SaveChangesAsync();
+                foreach (var route in reservation.Routes)
+                {
+                    route.ReservationId = reservation.Id;
+                    _context.RouteInfos.Update(route);
+                }
                 await _context.SaveChangesAsync();
                 return reservation;
             }
@@ -51,6 +60,23 @@ namespace REST.Data.Repos
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"Error retrieving route info from database: {ex.Message}");
+                throw;
+            }
+        }
+        public async Task<List<Reservation>> GetAllAsync()
+        {
+            try
+            {
+                return await _context.Reservations
+                    .Include(r => r.Routes)
+                    .ThenInclude(ro => ro.From)
+                    .Include(r => r.Routes)
+                    .ThenInclude(ro => ro.To)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error retrieving all reservations from database: {ex.Message}");
                 throw;
             }
         }

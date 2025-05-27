@@ -1,6 +1,9 @@
 <template>
     <div class="travel-app">
         <h1>Available Routes</h1>
+        <div class="see-reservations-container">
+            <SeeReservationsButton />
+        </div>
 
         <div class="filters">
             <div class="filter-group">
@@ -11,6 +14,7 @@
                         {{ company }}
                     </option>
                 </select>
+
             </div>
 
             <div class="filter-group">
@@ -169,7 +173,7 @@ const submitReservation = async () => {
             id: reservationStore.generateId(),
             firstName: reservation.value.firstName.trim(),
             lastName: reservation.value.lastName.trim(),
-            routeIds: selectedRoute.value?.routeInfoIds ?? [],
+            routeInfoIds: selectedRoute.value?.routeInfoIds ?? [],
             // routes: (selectedRoute.value?.routeInfoIds ?? [])
             //     .map(id => routeInfos.value.find(info => info.id === id))
             //     .filter((info): info is RouteInfo => info !== undefined),
@@ -178,6 +182,7 @@ const submitReservation = async () => {
             transportationCompanyNames: selectedRoute.value?.companyNames ?? []
 
         });
+        await reservationStore.getReservations();
         showReservationModal.value = false;
         reservation.value.firstName = "";
         reservation.value.lastName = "";
@@ -432,5 +437,18 @@ input {
     font-size: 24px;
     font-weight: bold;
     color: #03111f;
+}
+
+.see-reservations-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+
+}
+
+.see-reservations-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
 }
 </style>

@@ -17,7 +17,7 @@ namespace REST.Mappers
                 FirstName = reservationDto.FirstName,
                 LastName = reservationDto.LastName,
                 Routes = routeInfos,
-                RouteInfoIds = reservationDto.RouteIds ?? new List<Guid>(),
+                // RouteInfoIds = reservationDto.RouteInfoIds ?? new List<Guid>(),
                 TotalQuotedPrice = reservationDto.TotalQuotedPrice,
                 TotalQuotedTravelTime = reservationDto.TotalQuotedTravelTime,
                 TransportationCompanyNames = reservationDto.TransportationCompanyNames ?? new List<string>(),

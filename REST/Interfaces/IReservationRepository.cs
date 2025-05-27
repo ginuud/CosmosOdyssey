@@ -11,7 +11,7 @@ namespace REST.Interfaces
     {
         Task<Reservation> CreateAsync(Reservation reservationModel);
         Task<List<RouteInfo>> GetRouteInfosByIdsAsync(List<Guid> routeInfoIds);
-
         Task<Reservation?> GetByIdAsync(int id);
+        Task<List<Reservation>> GetAllAsync();
     }
 }

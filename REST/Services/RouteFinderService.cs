@@ -108,6 +108,8 @@ namespace REST.Services
 
             var legPaths = FindRoutes(origin, destination, allLegs);
 
+
+
             var routeDtos = new List<RouteDto>();
 
             foreach (var path in legPaths)
@@ -127,16 +129,12 @@ namespace REST.Services
                         Distance = path.Sum(l => l.RouteInfo.Distance),
                         TravelTime = Math.Round((providerSequence.Last().FlightEnd - providerSequence.First().FlightStart).TotalHours, 2)
                     });
-                    // if (routeDtos.Count >= 300)
-                    //     return routeDtos;
+                    if (routeDtos.Count >= 100)
+                        return routeDtos;
                 }
             }
-
             return routeDtos;
         }
-
-
-
     }
 
 }

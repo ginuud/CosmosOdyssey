@@ -67,7 +67,7 @@ const onSubmit = async (event?: Event) => {
   const routeExists = await routeStore.checkRouteExists(selectedOrigin, selectedDestination);
   if (routeExists) {
     router.push({
-      path: "/reservations",
+      path: "/routes",
       query: {
         from: selectedOrigin,
         to: selectedDestination

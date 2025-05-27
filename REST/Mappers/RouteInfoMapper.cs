@@ -16,9 +16,11 @@ namespace REST.Mappers
             return new RouteInfoDto
             {
                 Id = routeInfoModel.Id,
-                FromId = routeInfoModel.FromId,
-                ToId = routeInfoModel.ToId,
-                Distance = routeInfoModel.Distance
+                From = routeInfoModel.From,
+                To = routeInfoModel.To,
+                Distance = routeInfoModel.Distance,
+                ReservationId = routeInfoModel.ReservationId,
+
             };
         }
 
