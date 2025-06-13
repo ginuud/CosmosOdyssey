@@ -23,7 +23,8 @@ namespace CosmosOdyssey.REST.Data
         public DbSet<Planet> Planets { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Reservation>? Reservations { get; set; }
-        public DbSet<ReservedRoute> ReservedRoutes { get; set; }
+        public DbSet<ReservedRoute>? ReservedRoutes { get; set; }
+        public DbSet<RouteSegment>? RouteSegments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,6 +37,7 @@ namespace CosmosOdyssey.REST.Data
             modelBuilder.Entity<Planet>().ToTable("Planets");
             modelBuilder.Entity<Reservation>().ToTable("Reservations");
             modelBuilder.Entity<ReservedRoute>().ToTable("ReservedRoutes");
+            modelBuilder.Entity<RouteSegment>().ToTable("RouteSegments");
 
 
             modelBuilder.Entity<PriceList>(entity =>

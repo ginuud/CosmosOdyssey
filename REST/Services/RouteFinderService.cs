@@ -22,10 +22,8 @@ namespace REST.Services
         {
             var results = new List<List<Leg>>();
             int maxTransfers = 4;
-            var visited = new HashSet<Guid>();
 
-
-            void Dfs(string currentPlanet, List<Leg> path)
+            void Dfs(string currentPlanet, List<Leg> path, HashSet<string> visitedPlanets)
             {
                 if (path.Count > maxTransfers + 1)
                     return;
@@ -38,17 +36,22 @@ namespace REST.Services
 
                 foreach (var leg in allLegs)
                 {
+                    var nextPlanetName = leg.RouteInfo.To.Name;
                     if (leg.RouteInfo.From.Name == currentPlanet &&
-                        !path.Any(p => p.Id == leg.Id))
+                        !path.Any(p => p.Id == leg.Id) &&
+                        !visitedPlanets.Contains(nextPlanetName))
                     {
                         path.Add(leg);
-                        Dfs(leg.RouteInfo.To.Name, path);
+                        visitedPlanets.Add(nextPlanetName);
+                        Dfs(nextPlanetName, path, visitedPlanets);
                         path.RemoveAt(path.Count - 1);
+                        visitedPlanets.Remove(nextPlanetName);
                     }
                 }
             }
 
-            Dfs(origin, new List<Leg>());
+            var initialVisited = new HashSet<string> { origin };
+            Dfs(origin, new List<Leg>(), initialVisited);
             return results;
         }
 
