@@ -50,6 +50,12 @@
                         <span class="value">{{ route.companyNames.join(', ') }}</span>
                     </div>
 
+                    <!-- testimiseks: -->
+                    <div class="detail-group">
+                        <span class="label">route Info Ids:</span>
+                        <span class="value">{{ route.routeInfoIds.join(', ') }}</span>
+                    </div>
+
                     <div class="detail-group">
                         <span class="label">Distance:</span>
                         <span class="value">{{ route.distance }} km</span>

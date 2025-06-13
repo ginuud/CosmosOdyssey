@@ -13,8 +13,6 @@ namespace CosmosOdyssey.REST.Models
         public Planet To { get; set; }
         public Guid ToId { get; set; }
         public long Distance { get; set; }
-        public int? ReservationId { get; set; }
-        public Reservation? Reservation { get; set; }
 
 
     }

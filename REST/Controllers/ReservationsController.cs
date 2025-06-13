@@ -44,16 +44,14 @@ namespace REST.Controllers
 
             try
             {
-                var routeInfoIds = reservationDto.RouteInfoIds;
-                var routeInfos = await repo.GetRouteInfosByIdsAsync(routeInfoIds);
-                //var routeInfos = await repo.GetRouteInfosByIdsAsync(reservationDto.RouteInfoIds);
+                var reservedRoute = await repo.GetReservedRouteByRouteInfoIdsAsync(reservationDto.RouteInfoIds);
 
-                if (routeInfos.Count != reservationDto.RouteInfoIds.Count)
+                if (reservedRoute == null)
                 {
-                    return BadRequest("One or more RouteInfo IDs are invalid.");
+                    reservedRoute = await repo.CreateReservedRoute(reservationDto.RouteInfoIds);
                 }
 
-                var reservationModel = reservationDto.ToReservationFromCreate(routeInfos);
+                var reservationModel = reservationDto.ToReservationFromCreate(reservedRoute.Id);
                 var result = await repo.CreateAsync(reservationModel);
 
                 return CreatedAtAction(nameof(GetReservation), new { id = reservationModel.Id }, reservationModel.ToReservationDto());

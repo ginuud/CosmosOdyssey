@@ -18,9 +18,7 @@ namespace REST.Mappers
                 Id = routeInfoModel.Id,
                 From = routeInfoModel.From,
                 To = routeInfoModel.To,
-                Distance = routeInfoModel.Distance,
-                ReservationId = routeInfoModel.ReservationId,
-
+                Distance = routeInfoModel.Distance
             };
         }
 

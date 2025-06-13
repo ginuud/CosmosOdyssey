@@ -23,6 +23,7 @@ namespace CosmosOdyssey.REST.Data
         public DbSet<Planet> Planets { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Reservation>? Reservations { get; set; }
+        public DbSet<ReservedRoute> ReservedRoutes { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,6 +35,7 @@ namespace CosmosOdyssey.REST.Data
             modelBuilder.Entity<Company>().ToTable("Companies");
             modelBuilder.Entity<Planet>().ToTable("Planets");
             modelBuilder.Entity<Reservation>().ToTable("Reservations");
+            modelBuilder.Entity<ReservedRoute>().ToTable("ReservedRoutes");
 
 
             modelBuilder.Entity<PriceList>(entity =>
@@ -108,12 +110,27 @@ namespace CosmosOdyssey.REST.Data
             });
 
             modelBuilder.Entity<Reservation>()
-                .HasMany(re => re.Routes)
-                .WithOne(r => r.Reservation)
-                .HasForeignKey(r => r.ReservationId);
+                .HasOne(re => re.ReservedRoute)
+                .WithMany(rr => rr.Reservations)
+                .HasForeignKey(re => re.ReservedRouteId);
 
             modelBuilder.Entity<Reservation>().Property(x => x.Id).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<ReservedRoute>()
+                .HasMany(re => re.RouteSegments)
+                .WithOne(s => s.ReservedRoute)
+                .HasForeignKey(s => s.ReservedRouteId);
+
+            modelBuilder.Entity<ReservedRoute>().Property(x => x.Id).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<RouteSegment>()
+                .HasOne(rs => rs.RouteInfo)
+                .WithMany()
+                .HasForeignKey(rs => rs.RouteInfoId);
+            modelBuilder.Entity<RouteSegment>().Property(x => x.Id).ValueGeneratedOnAdd();
+
         }
+
 
         public class DesignTimeDataContextFactory : IDesignTimeDbContextFactory<DataContext>
         {

@@ -5,19 +5,19 @@ using System.Threading.Tasks;
 using CosmosOdyssey.REST.Models;
 using CosmosOdyssey.REST.Data;
 using CosmosOdyssey.REST.Dtos;
+using REST.Models;
 
 namespace REST.Mappers
 {
     public static class ReservationMapper
     {
-        public static Reservation ToReservationFromCreate(this CreateReservationDto reservationDto, List<RouteInfo> routeInfos)
+        public static Reservation ToReservationFromCreate(this CreateReservationDto reservationDto, int RouteId)
         {
             return new Reservation
             {
                 FirstName = reservationDto.FirstName,
                 LastName = reservationDto.LastName,
-                Routes = routeInfos,
-                // RouteInfoIds = reservationDto.RouteInfoIds ?? new List<Guid>(),
+                ReservedRouteId = RouteId,
                 TotalQuotedPrice = reservationDto.TotalQuotedPrice,
                 TotalQuotedTravelTime = reservationDto.TotalQuotedTravelTime,
                 TransportationCompanyNames = reservationDto.TransportationCompanyNames ?? new List<string>(),
@@ -26,12 +26,17 @@ namespace REST.Mappers
 
         public static ReservationDto ToReservationDto(this Reservation reservationModel)
         {
+            var orderedSegments = reservationModel.ReservedRoute?.RouteSegments?
+                .OrderBy(s => s.SegmentOrder)
+                .ToList() ?? new List<RouteSegment>();
+
+
             return new ReservationDto
             {
                 Id = reservationModel.Id,
                 FirstName = reservationModel.FirstName,
                 LastName = reservationModel.LastName,
-                Routes = reservationModel.Routes.Select(r => r.ToRouteInfoDto()).ToList(),
+                Routes = orderedSegments.Select(s => s.RouteInfo?.ToRouteInfoDto() ?? new RouteInfoDto()).ToList(),
                 TotalQuotedPrice = reservationModel.TotalQuotedPrice,
                 TotalQuotedTravelTime = reservationModel.TotalQuotedTravelTime,
                 TransportationCompanyNames = reservationModel.TransportationCompanyNames,

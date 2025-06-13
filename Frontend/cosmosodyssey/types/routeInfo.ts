@@ -6,5 +6,4 @@ export type RouteInfo = {
     from: Planet;
     to: Planet; 
     distance: number;
-    reservationId: number | null; 
 };

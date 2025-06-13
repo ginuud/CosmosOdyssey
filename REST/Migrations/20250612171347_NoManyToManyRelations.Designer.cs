@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using CosmosOdyssey.REST.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace REST.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250612171347_NoManyToManyRelations")]
+    partial class NoManyToManyRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,7 +205,7 @@ namespace REST.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReservedRoutes", (string)null);
+                    b.ToTable("ReservedRoutes");
                 });
 
             modelBuilder.Entity("REST.Models.RouteSegment", b =>

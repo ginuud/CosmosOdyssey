@@ -12,7 +12,6 @@ namespace CosmosOdyssey.REST.Dtos
         public Planet From { get; set; } = new Planet();
         public Planet To { get; set; } = new Planet();
         public long Distance { get; set; }
-        public int? ReservationId { get; set; }
 
     }
 }

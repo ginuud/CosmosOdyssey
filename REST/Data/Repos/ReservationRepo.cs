@@ -2,6 +2,7 @@ using CosmosOdyssey.REST.Data;
 using REST.Interfaces;
 using CosmosOdyssey.REST.Models;
 using Microsoft.EntityFrameworkCore;
+using REST.Models;
 
 namespace REST.Data.Repos
 {
@@ -14,12 +15,15 @@ namespace REST.Data.Repos
             try
             {
                 var dbReservation = await _context.Reservations
-                    .Include(r => r.Routes)
-                    .ThenInclude(ro => ro.From)
-                    .Include(r => r.Routes)
-                    .ThenInclude(ro => ro.To)
+                    .Include(r => r.ReservedRoute)
+                        .ThenInclude(r => r.RouteSegments.OrderBy(s => s.SegmentOrder))
+                                .ThenInclude(rs => rs.RouteInfo)
+                                    .ThenInclude(ri => ri.From)
+                        .Include(r => r.ReservedRoute)
+                            .ThenInclude(r => r.RouteSegments)
+                                .ThenInclude(rs => rs.RouteInfo)
+                                    .ThenInclude(ri => ri.To)
                     .FirstOrDefaultAsync(r => r.Id == id);
-
                 return dbReservation;
             }
             catch (Exception ex)
@@ -35,12 +39,6 @@ namespace REST.Data.Repos
             {
                 await _context.Reservations.AddAsync(reservation);
                 await _context.SaveChangesAsync();
-                foreach (var route in reservation.Routes)
-                {
-                    route.ReservationId = reservation.Id;
-                    _context.RouteInfos.Update(route);
-                }
-                await _context.SaveChangesAsync();
                 return reservation;
             }
             catch (Exception ex)
@@ -49,6 +47,33 @@ namespace REST.Data.Repos
                 throw;
             }
         }
+        public async Task<ReservedRoute> CreateReservedRoute(List<Guid> routeInfoIds)
+        {
+            try
+            {
+                var reservedRoute = new ReservedRoute();
+
+                for (int i = 0; i < routeInfoIds.Count; i++)
+                {
+                    reservedRoute.RouteSegments.Add(new RouteSegment
+                    {
+                        RouteInfoId = routeInfoIds[i],
+                        SegmentOrder = i
+                    });
+                }
+
+                await _context.ReservedRoutes.AddAsync(reservedRoute);
+                await _context.SaveChangesAsync();
+                return reservedRoute;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error creating reserved route: {ex.Message}");
+                throw;
+            }
+        }
+
+
         public async Task<List<RouteInfo>> GetRouteInfosByIdsAsync(List<Guid> routeInfoIds)
         {
             try
@@ -63,15 +88,47 @@ namespace REST.Data.Repos
                 throw;
             }
         }
+        public async Task<ReservedRoute> GetReservedRouteByRouteInfoIdsAsync(List<Guid> routeInfoIds)
+        {
+            try
+            {
+                var candidateRoutes = await _context.ReservedRoutes
+                    .Include(rr => rr.RouteSegments)
+                    .Where(rr => rr.RouteSegments.Count == routeInfoIds.Count)
+                    .ToListAsync();
+
+                foreach (var route in candidateRoutes)
+                {
+                    var orderedIds = route.RouteSegments
+                        .OrderBy(rs => rs.SegmentOrder)
+                        .Select(rs => rs.RouteInfoId)
+                        .ToList();
+
+                    if (orderedIds.SequenceEqual(routeInfoIds))
+                        return route;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error retrieving reserved route from database: {ex.Message}");
+                throw;
+            }
+        }
         public async Task<List<Reservation>> GetAllAsync()
         {
             try
             {
                 return await _context.Reservations
-                    .Include(r => r.Routes)
-                    .ThenInclude(ro => ro.From)
-                    .Include(r => r.Routes)
-                    .ThenInclude(ro => ro.To)
+                    .Include(r => r.ReservedRoute)
+                        .ThenInclude(r => r.RouteSegments.OrderBy(s => s.SegmentOrder))
+                            .ThenInclude(rs => rs.RouteInfo)
+                                .ThenInclude(ri => ri.From)
+                    .Include(r => r.ReservedRoute)
+                        .ThenInclude(rr => rr.RouteSegments)
+                            .ThenInclude(rs => rs.RouteInfo)
+                                .ThenInclude(ri => ri.To)
                     .ToListAsync();
             }
             catch (Exception ex)
