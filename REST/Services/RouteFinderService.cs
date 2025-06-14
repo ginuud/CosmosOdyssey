@@ -83,7 +83,7 @@ namespace REST.Services
                         var timeGap = provider.FlightStart - previousFlightEnd;
 
                         if (provider.FlightStart > previousFlightEnd &&
-                            timeGap.TotalHours <= 24)
+                            timeGap.TotalHours <= 8 && timeGap.TotalHours >= 0.5)
                         {
                             currentSequence.Add(provider);
                             Dfs(index + 1, currentSequence);
@@ -111,8 +111,6 @@ namespace REST.Services
 
             var legPaths = FindRoutes(origin, destination, allLegs);
 
-
-
             var routeDtos = new List<RouteDto>();
 
             foreach (var path in legPaths)
@@ -121,7 +119,7 @@ namespace REST.Services
 
                 foreach (var providerSequence in validProviderSequences)
                 {
-                    routeDtos.Add(new RouteDto
+                    var newRoute = new RouteDto
                     {
                         RouteInfoIds = path.Select(l => l.RouteInfoId).ToList(),
                         From = path.First().RouteInfo.From.Name ?? "Unknown",
@@ -131,9 +129,25 @@ namespace REST.Services
                         Price = providerSequence.Sum(p => p.Price),
                         Distance = path.Sum(l => l.RouteInfo.Distance),
                         TravelTime = Math.Round((providerSequence.Last().FlightEnd - providerSequence.First().FlightStart).TotalHours, 2)
-                    });
-                    if (routeDtos.Count >= 100)
-                        return routeDtos;
+                    };
+
+                    bool isCheaperAndShorter = routeDtos.Any(existingRoute =>
+                        existingRoute.From == newRoute.From &&
+                        existingRoute.To == newRoute.To &&
+                        existingRoute.Price <= newRoute.Price &&
+                        existingRoute.TravelTime <= newRoute.TravelTime);
+
+                    if (!isCheaperAndShorter)
+                    {
+                        routeDtos.RemoveAll(existingRoute =>
+                        existingRoute.From == newRoute.From &&
+                        existingRoute.To == newRoute.To &&
+                        existingRoute.Price >= newRoute.Price &&
+                        existingRoute.TravelTime >= newRoute.TravelTime);
+
+                        routeDtos.Add(newRoute);
+                    }
+
                 }
             }
             return routeDtos;
