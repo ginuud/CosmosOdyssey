@@ -20,7 +20,6 @@ builder.Services
     .AddScoped<IReservationRepository, ReservationRepo>()
     .AddScoped<IRouteFinderService, RouteFinderService>();
 //     .AddScoped<ICompanyRepository, CompanyRepo>()
-//     .AddScoped<ICustomerRepository, CustomerRepo>()
 //     .AddScoped<ILegRepository, LegRepo>()
 //     .AddScoped<IPlanetRepository, PlanetRepo>()
 //     .AddScoped<IPriceListRepository, PriceListRepo>()

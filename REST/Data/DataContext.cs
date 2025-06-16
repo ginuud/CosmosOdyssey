@@ -21,7 +21,6 @@ namespace CosmosOdyssey.REST.Data
         public DbSet<Provider> Providers { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Planet> Planets { get; set; }
-        public DbSet<Customer> Customers { get; set; }
         public DbSet<Reservation>? Reservations { get; set; }
         public DbSet<ReservedRoute>? ReservedRoutes { get; set; }
         public DbSet<RouteSegment>? RouteSegments { get; set; }

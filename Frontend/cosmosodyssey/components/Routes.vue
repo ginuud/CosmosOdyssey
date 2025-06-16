@@ -52,6 +52,11 @@
 
                     <!-- testimiseks: -->
                     <div class="detail-group">
+                        <span class="label">Price List Id:</span>
+                        <span class="value">{{ route.priceListId }}</span>
+                    </div>
+
+                    <div class="detail-group">
                         <span class="label">route Info Ids:</span>
                         <span class="value">{{ route.routeInfoIds.join(', ') }}</span>
                     </div>
@@ -160,10 +165,17 @@ const filteredAndSortedRoutes = computed(() => {
 });
 
 const formatTravelTime = (hours: number) => {
+
     const totalMinutes = Math.round(hours * 60);
-    const hoursPart = Math.floor(totalMinutes / 60);
+    const days = Math.floor(totalMinutes / (60 * 24));
+    const hoursPart = Math.floor((totalMinutes % (60 * 24)) / 60);
     const minutesPart = totalMinutes % 60;
-    return `${hoursPart}h ${minutesPart}min`;
+
+    let result = "";
+    if (days > 0) result += `${days} day(s) `;
+    if (hoursPart > 0 && days > 0) result += `${hoursPart}h `;
+    result += `${minutesPart}min`;
+    return result.trim();
 };
 
 const openReservationModal = (route: Route) => {

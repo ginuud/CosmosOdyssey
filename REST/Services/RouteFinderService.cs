@@ -82,8 +82,8 @@ namespace REST.Services
                         var previousFlightEnd = currentSequence.Last().FlightEnd;
                         var timeGap = provider.FlightStart - previousFlightEnd;
 
-                        if (provider.FlightStart > previousFlightEnd &&
-                            timeGap.TotalHours <= 8 && timeGap.TotalHours >= 0.5)
+                        if (provider.FlightStart > previousFlightEnd
+                         && timeGap.TotalHours <= 48 && timeGap.TotalHours >= 0.5)
                         {
                             currentSequence.Add(provider);
                             Dfs(index + 1, currentSequence);
@@ -100,6 +100,8 @@ namespace REST.Services
 
         public async Task<List<RouteDto>> FindAllRoutesAsync(string origin, string destination)
         {
+            var timeNowUtc = DateTime.UtcNow;
+
             var allLegs = await _context.Legs
                 .Include(l => l.RouteInfo)
                     .ThenInclude(r => r.From)
@@ -107,6 +109,8 @@ namespace REST.Services
                     .ThenInclude(r => r.To)
                 .Include(l => l.Providers)
                     .ThenInclude(p => p.Company)
+                .Include(l => l.PriceList)
+                .Where(l => l.PriceList.ValidUntil > timeNowUtc)
                 .ToListAsync();
 
             var legPaths = FindRoutes(origin, destination, allLegs);
@@ -119,8 +123,9 @@ namespace REST.Services
 
                 foreach (var providerSequence in validProviderSequences)
                 {
-                    var newRoute = new RouteDto
+                    routeDtos.Add(new RouteDto
                     {
+                        PriceListId = path.First().PriceList.Id, // testimine
                         RouteInfoIds = path.Select(l => l.RouteInfoId).ToList(),
                         From = path.First().RouteInfo.From.Name ?? "Unknown",
                         To = path.Last().RouteInfo.To.Name ?? "Unknown",
@@ -129,25 +134,7 @@ namespace REST.Services
                         Price = providerSequence.Sum(p => p.Price),
                         Distance = path.Sum(l => l.RouteInfo.Distance),
                         TravelTime = Math.Round((providerSequence.Last().FlightEnd - providerSequence.First().FlightStart).TotalHours, 2)
-                    };
-
-                    bool isCheaperAndShorter = routeDtos.Any(existingRoute =>
-                        existingRoute.From == newRoute.From &&
-                        existingRoute.To == newRoute.To &&
-                        existingRoute.Price <= newRoute.Price &&
-                        existingRoute.TravelTime <= newRoute.TravelTime);
-
-                    if (!isCheaperAndShorter)
-                    {
-                        routeDtos.RemoveAll(existingRoute =>
-                        existingRoute.From == newRoute.From &&
-                        existingRoute.To == newRoute.To &&
-                        existingRoute.Price >= newRoute.Price &&
-                        existingRoute.TravelTime >= newRoute.TravelTime);
-
-                        routeDtos.Add(newRoute);
-                    }
-
+                    });
                 }
             }
             return routeDtos;

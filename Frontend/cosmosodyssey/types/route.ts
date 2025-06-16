@@ -1,6 +1,7 @@
 export type Guid = string;
 
 export type Route = {
+    priceListId: Guid;
     routeInfoIds: Guid[];
     from: string;
     to: string;
