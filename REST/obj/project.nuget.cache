@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fgTD8twlH+AHF8HSC9E48KaJVOGWkbPwfrWHa6c2uBqqWU7VVjkUsBCock1b4fLxtjj7LvpSxvzhVzjeXpvTbg==",
+  "dgSpecHash": "5ZwKrEGK2CA0a2LY5zuy6MHZw9Qo7Yzpel2xiCzxz3CDTH7LnIfXyko2tET09atzyBOO8HE4SpPGHwjrPa2wXw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Kiviselg\\CosmosOdyssey\\CosmosOdyssey\\rest\\REST.csproj",
+  "projectFilePath": "C:\\Users\\Kiviselg\\CosmosOdyssey\\CosmosOdyssey\\REST\\REST.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kiviselg\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Kiviselg\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

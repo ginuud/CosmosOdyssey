@@ -8,6 +8,7 @@ using CosmosOdyssey.REST.Models;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using System.Globalization;
+using REST.Models;
 
 namespace CosmosOdyssey.REST.Data
 {
@@ -43,14 +44,6 @@ namespace CosmosOdyssey.REST.Data
 
             var newPriceList = JsonSerializer.Deserialize<PriceList>(jsonString, options);
 
-            // _context.ChangeTracker.Clear();
-            // await _context.Providers.ExecuteDeleteAsync();
-            // await _context.Legs.ExecuteDeleteAsync();
-            // await _context.RouteInfos.ExecuteDeleteAsync();
-            // await _context.PriceLists.ExecuteDeleteAsync();
-            // await _context.Companies.ExecuteDeleteAsync();
-            // await _context.Planets.ExecuteDeleteAsync();
-
             var existingPriceList = await _context.PriceLists.FindAsync(newPriceList.Id);
             if (existingPriceList != null)
             {
@@ -64,10 +57,34 @@ namespace CosmosOdyssey.REST.Data
                 if (oldestPriceList != null)
                 {
                     var legsToRemove = _context.Legs.Where(l => l.PriceListId == oldestPriceList.Id);
-                    var routeInfosToRemove = _context.RouteInfos.Where(ri => legsToRemove.Select(l => l.RouteInfoId).Contains(ri.Id));
+
+                    var routeInfoIdsToRemove = legsToRemove.Select(l => l.RouteInfoId).ToList();
+                    var routeInfosToRemove = _context.RouteInfos.Where(ri => routeInfoIdsToRemove.Contains(ri.Id));
+
+                    var fromPlanetIdsToRemove = routeInfosToRemove.Select(ri => ri.FromId).ToList();
+                    var fromplanetsToRemove = _context.Planets.Where(p => fromPlanetIdsToRemove.Contains(p.Id));
+
+                    var toPlanetIdsToRemove = routeInfosToRemove.Select(ri => ri.ToId).ToList();
+                    var toPlanetsToRemove = _context.Planets.Where(p => toPlanetIdsToRemove.Contains(p.Id));
+
+                    var routeSegmentsToRemove = _context.RouteSegments?.Where(rs => routeInfoIdsToRemove.Contains(rs.RouteInfoId));
+                    var routeSegmentIdsToRemove = routeSegmentsToRemove?.Select(rs => rs.Id).ToList() ?? new List<int>();
+
+                    var reservedRoutesToRemove = _context.ReservedRoutes?.Where(rr => rr.RouteSegments.Any(rs => routeSegmentIdsToRemove.Contains(rs.Id))) ?? Enumerable.Empty<ReservedRoute>().AsQueryable();
+                    var reservationsToRemove = _context.Reservations?.Where(r => reservedRoutesToRemove.Select(rr => rr.Id).Contains(r.ReservedRouteId));
+
                     var providersToRemove = _context.Providers.Where(p => legsToRemove.SelectMany(l => l.Providers).Select(pr => pr.Id).Contains(p.Id));
 
+                    var companyIdsToRemove = providersToRemove.Select(p => p.CompanyId).ToList();
+                    var companiesToRemove = _context.Companies.Where(c => companyIdsToRemove.Contains(c.Id));
+
+                    _context.Companies.RemoveRange(companiesToRemove);
                     _context.Providers.RemoveRange(providersToRemove);
+                    _context.Reservations?.RemoveRange(reservationsToRemove ?? Enumerable.Empty<Reservation>());
+                    _context.ReservedRoutes?.RemoveRange(reservedRoutesToRemove);
+                    _context.RouteSegments?.RemoveRange(routeSegmentsToRemove ?? Enumerable.Empty<RouteSegment>());
+                    _context.Planets.RemoveRange(fromplanetsToRemove);
+                    _context.Planets.RemoveRange(toPlanetsToRemove);
                     _context.RouteInfos.RemoveRange(routeInfosToRemove);
                     _context.Legs.RemoveRange(legsToRemove);
                     _context.PriceLists.Remove(oldestPriceList);
@@ -76,9 +93,6 @@ namespace CosmosOdyssey.REST.Data
 
             foreach (var leg in newPriceList.Legs)
             {
-                leg.RouteInfo.From = await GetOrAddPlanet(leg.RouteInfo.From);
-                leg.RouteInfo.To = await GetOrAddPlanet(leg.RouteInfo.To);
-
                 _context.RouteInfos.Add(leg.RouteInfo);
 
                 foreach (var provider in leg.Providers)
@@ -104,19 +118,6 @@ namespace CosmosOdyssey.REST.Data
             }
         }
 
-        private async Task<Planet> GetOrAddPlanet(Planet planet)
-        {
-            var existing = await _context.Planets.FindAsync(planet.Id);
-            if (existing != null)
-            {
-                return existing;
-            }
-            else
-            {
-                await _context.Planets.AddAsync(planet);
-                return planet;
-            }
-        }
         public class JsonGuidConverter : JsonConverter<Guid>
         {
             public override Guid Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options)
