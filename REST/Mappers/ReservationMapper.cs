@@ -30,7 +30,6 @@ namespace REST.Mappers
                 .OrderBy(s => s.SegmentOrder)
                 .ToList() ?? new List<RouteSegment>();
 
-
             return new ReservationDto
             {
                 Id = reservationModel.Id,

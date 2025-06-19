@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from "#ui/types";
 import { usePlanetStore } from "@/stores/planetStore";
-import { ref, computed, reactive } from "vue";
 import { useRouteStore } from "~/stores/RouteStore"
 import { useRouter } from "vue-router";
 import { UFormField } from "#components";
+import { onMounted, ref, reactive } from "vue";
+
 const router = useRouter();
 const routeStore = useRouteStore();
 const planetStore = usePlanetStore();
@@ -78,64 +79,39 @@ const onSubmit = async (event?: Event) => {
   else { alert("No route exists for the selected origin and destination."); }
 };
 
-// const planetOptions = computed(() =>{
-// const uniquePlanets = new Map();
-//   planetStore.planets.forEach((planet) => {
-//       if (!uniquePlanets.has(planet.name)) {
-//           uniquePlanets.set(planet.name, planet);
-//       }
-//   });
-//   return Array.from(uniquePlanets.values()).map((planet) => ({
-//       label: planet.name,
-//       value: planet,
-//   }));
-// });
+const planetOptions = ref<{ label: string; value: string }[]>([]);
 
-const planetOptions = ref([
-  {
-    label: 'Earth',
-    icon: 'i-lucide:earth',
-    value: 'Earth',
-  },
-  {
-    label: 'Mars',
-    value: 'Mars',
-  },
-  {
-    label: 'Venus',
-    value: 'Venus',
-  },
-  {
-    label: 'Jupiter',
-    value: 'Jupiter',
-  },
-  {
-    label: 'Saturn',
-    value: 'Saturn',
-  },
-  {
-    label: 'Neptune',
-    value: 'Neptune',
-  },
-  {
-    label: 'Uranus',
-    value: 'Uranus',
-  },
-  {
-    label: 'Mercury',
-    value: 'Mercury',
+onMounted(async () => {
+  const names = await planetStore.getPlanetNames();
+  console.log('Fetched planet names:', names);
+  if (!Array.isArray(names)) {
+    planetOptions.value = [];
+    return;
   }
-]);
+  planetOptions.value = names.map((name: string) => ({
+    label: name,
+    value: name,
+  }));
+});
 
+const handleAnimatedSubmit = async (event?: Event) => {
+  animate();
+  setTimeout(() => {
+    onSubmit(event);
+  }, 400);
+};
 
 const animate = () => {
   const planeElement = document.getElementById('plane');
   if (planeElement) {
-    planeElement.className = 'animation';
+    planeElement.classList.add('animation');
+    const bgElement = document.getElementById('bg');
+    setTimeout(() => planeElement?.classList.remove('animation'), 400);
   }
   const bgElement = document.getElementById('bg');
   if (bgElement) {
     bgElement.className = 'animation2';
+    setTimeout(() => bgElement.classList.remove('animation2'), 800);
   }
 };
 </script>
@@ -158,14 +134,9 @@ const animate = () => {
       </div>
 
       <div class="button-container">
-        <button class="btn btn-inside btn-boarder" @click="onSubmit">
+        <button type="button" class="btn btn-inside btn-boarder" @click="handleAnimatedSubmit">
           <img src="https://i.cloudup.com/gBzAn-oW_S-2000x2000.png" width="35px" height="35px" id="plane" />
         </button>
-        <div class="bg">
-          <img src="https://i.cloudup.com/2ZAX3hVsBE-3000x3000.png" id="bg" width="32px" height="32px"
-            style="opacity:0;" />
-        </div>
-        <div class="around around-boarder" @click="animate"></div>
       </div>
     </div>
   </UForm>
@@ -185,17 +156,16 @@ body {
 
 .custom-select {
   border-radius: 0.5rem;
-  min-width: 10rem;
   font-size: 1.2rem;
   font-family: "Orbitron", sans-serif;
   color: #9acef0;
+  padding: 0.5rem;
 }
 
 .field {
   backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   border: 1px solid #9acef0;
   border-radius: 0.5rem;
@@ -203,7 +173,6 @@ body {
   color: #9acef0;
   font-weight: 400;
   font-size: 1.2rem;
-  margin: 0;
   font-family: "Orbitron", sans-serif;
 }
 
@@ -218,8 +187,6 @@ body {
   font-size: 0, 5rem;
   font-family: "Orbitron", sans-serif;
 }
-
-
 
 .button-container {
   position: relative;
@@ -295,7 +262,6 @@ body {
   -moz-transition: all 0.3s;
   transition: all 0.3s;
 
-
 }
 
 .around:after {
@@ -315,7 +281,7 @@ body {
 
 .fields-and-button-container {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   align-items: flex-end;
 }
 

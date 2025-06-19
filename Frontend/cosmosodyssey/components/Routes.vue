@@ -2,8 +2,14 @@
     <div class="travel-app">
         <h1>Available Routes</h1>
         <div class="see-reservations-container">
-            <SeeReservationsButton />
+            <Timer :reservation-modal-open="showReservationModal" @close-reservation="showReservationModal = false"
+                @session-expired="handleSessionExpired" />
+            <div class="buttons">
+                <SeeReservationsButton />
+                <SelectTripButton />
+            </div>
         </div>
+
 
         <div class="filters">
             <div class="filter-group">
@@ -82,8 +88,10 @@
                 <h2>Plan a trip</h2>
                 <div class="selected-route-info">
                     <h3>{{ selectedRoute?.from }} → {{ selectedRoute?.to }}</h3>
-                    <p>{{ selectedRoute?.companyNames?.join(', ') }} | {{ selectedRoute?.price }}€ | {{
-                        formatTravelTime(selectedRoute?.travelTime ?? 0) }}</p>
+                    <p><span class="label">Company(s):</span> {{ selectedRoute?.companyNames?.join(', ') }}</p>
+                    <p><span class="label">Price:</span> {{ selectedRoute?.price }}€ </p>
+                    <p><span class="label">Travel time:</span> {{ formatTravelTime(selectedRoute?.travelTime ?? 0) }}
+                    </p>
                 </div>
 
                 <form @submit.prevent="submitReservation">
@@ -121,6 +129,13 @@ const routeInfoStore = useRouteInfoStore();
 const { routes } = storeToRefs(routeStore);
 const { routeInfos } = storeToRefs(routeInfoStore);
 const reservationStore = useReservationStore();
+const showTimerWarning = ref(false);
+
+
+const handleSessionExpired = () => {
+    showTimerWarning.value = false;
+    window.location.reload();
+};
 
 
 const filters = ref({
@@ -173,7 +188,7 @@ const formatTravelTime = (hours: number) => {
 
     let result = "";
     if (days > 0) result += `${days} day(s) `;
-    if (hoursPart > 0 && days > 0) result += `${hoursPart}h `;
+    if (hoursPart > 0 || days > 0) result += `${hoursPart}h `;
     result += `${minutesPart}min`;
     return result.trim();
 };
@@ -192,9 +207,6 @@ const submitReservation = async () => {
             firstName: reservation.value.firstName.trim(),
             lastName: reservation.value.lastName.trim(),
             routeInfoIds: selectedRoute.value?.routeInfoIds ?? [],
-            // routes: (selectedRoute.value?.routeInfoIds ?? [])
-            //     .map(id => routeInfos.value.find(info => info.id === id))
-            //     .filter((info): info is RouteInfo => info !== undefined),
             totalQuotedPrice: selectedRoute.value?.price ?? 0,
             totalQuotedTravelTime: selectedRoute.value?.travelTime ?? 0,
             transportationCompanyNames: selectedRoute.value?.companyNames ?? []
@@ -232,9 +244,6 @@ onMounted(async () => {
             route.query.from as string,
             route.query.to as string
         );
-        if (!exists) {
-            return router.push('/')
-        }
     }
 });
 </script>
@@ -332,24 +341,22 @@ select {
 .label {
     width: 160px;
     font-weight: bold;
-    color: #666;
+    color: #0b0b0b;
+    font-family: 'orbitron', sans-serif;
 }
 
 .reserve-button {
-    display: block;
     width: 100%;
     padding: 10px;
     background-color: #4c39f5;
     color: white;
-    border: none;
     border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
 .reserve-button:hover {
-    background-color: #2b8fad;
+    background-color: #0056b3;
 }
 
 .modal {
@@ -372,6 +379,7 @@ select {
     border-radius: 8px;
     padding: 20px;
     position: relative;
+    color: #111213;
 }
 
 .close-button {
@@ -392,12 +400,13 @@ select {
 
 .selected-route-info h3 {
     margin: 0 0 10px 0;
-    color: #2c3e50;
+    color: #0c0c0c;
 }
 
 .selected-route-info p {
     margin: 0;
-    color: #2a4ba3;
+    color: #3b3b3c;
+    font-family: 'funnel-web', sans-serif;
 }
 
 .form-group {
@@ -427,6 +436,10 @@ input {
     border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
 }
 
 .no-routes {
@@ -459,14 +472,18 @@ input {
 
 .see-reservations-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
     margin-bottom: 20px;
 
 }
 
-.see-reservations-container {
+.buttons {
     display: flex;
-    justify-content: flex-end;
+    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 20px;
 }
 </style>

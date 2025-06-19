@@ -18,11 +18,11 @@ builder.Configuration
 builder.Services
     .AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")))
     .AddScoped<IReservationRepository, ReservationRepo>()
-    .AddScoped<IRouteFinderService, RouteFinderService>();
+    .AddScoped<IRouteFinderService, RouteFinderService>()
+    .AddScoped<IPriceListRepository, PriceListRepo>()
+    .AddScoped<IPlanetRepository, PlanetRepo>();
 //     .AddScoped<ICompanyRepository, CompanyRepo>()
 //     .AddScoped<ILegRepository, LegRepo>()
-//     .AddScoped<IPlanetRepository, PlanetRepo>()
-//     .AddScoped<IPriceListRepository, PriceListRepo>()
 //     .AddScoped<IProviderRepository, ProviderRepo>()
 //     .AddScoped<IRouteInfoRepository, RouteInfoRepo>()
 

@@ -3,6 +3,7 @@
         <h1>Made Reservations</h1>
         <div class="see-routes-container">
             <MoveToRoutesPageButton />
+            <SelectTripButton />
         </div>
 
         <div class="filters">
@@ -92,10 +93,17 @@ const filteredReservations = computed(() => {
 });
 
 const formatTravelTime = (hours: number) => {
+
     const totalMinutes = Math.round(hours * 60);
-    const hoursPart = Math.floor(totalMinutes / 60);
+    const days = Math.floor(totalMinutes / (60 * 24));
+    const hoursPart = Math.floor((totalMinutes % (60 * 24)) / 60);
     const minutesPart = totalMinutes % 60;
-    return `${hoursPart}h ${minutesPart}min`;
+
+    let result = "";
+    if (days > 0) result += `${days} day(s) `;
+    if (hoursPart > 0 || days > 0) result += `${hoursPart}h `;
+    result += `${minutesPart}min`;
+    return result.trim();
 };
 
 
@@ -316,7 +324,9 @@ input {
 
 .see-routes-container {
     display: flex;
-    justify-content: flex-end;
+    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 20px;
 }
 </style>

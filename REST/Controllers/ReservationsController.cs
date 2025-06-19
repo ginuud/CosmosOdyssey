@@ -36,7 +36,6 @@ namespace REST.Controllers
             return Ok(reservation.ToReservationDto());
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateReservationDto reservationDto)
         {
@@ -69,7 +68,5 @@ namespace REST.Controllers
             var dto = reservations.Select(r => r.ToReservationDto());
             return Ok(dto);
         }
-
-
     }
 }

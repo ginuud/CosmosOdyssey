@@ -10,8 +10,6 @@ namespace CosmosOdyssey.REST.Services
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<TravelPriceSyncService> _logger;
-        private readonly TimeSpan _syncInterval = TimeSpan.FromMinutes(2);
-
         public TravelPriceSyncService(IServiceScopeFactory scopeFactory, ILogger<TravelPriceSyncService> logger)
         {
             _scopeFactory = scopeFactory;
@@ -22,23 +20,57 @@ namespace CosmosOdyssey.REST.Services
         {
             _logger.LogInformation("TravelPriceSyncService is starting.");
 
+            DateTime? nextSyncTime = null;
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
                     using var scope = _scopeFactory.CreateScope();
                     var dataService = scope.ServiceProvider.GetRequiredService<IDataService>();
+                    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-                    //_logger.LogInformation("Syncing travel prices...");
                     await dataService.SyncTravelPricesAsync();
                     _logger.LogDebug("Travel prices synced successfully.");
+
+                    var latestPriceListValidUntil = context.PriceLists
+                        .OrderByDescending(pl => pl.ValidUntil)
+                        .Select(pl => pl.ValidUntil)
+                        .FirstOrDefault();
+
+                    if (latestPriceListValidUntil != default)
+                    {
+                        nextSyncTime = latestPriceListValidUntil.AddSeconds(3);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("No valid price list found. Will retry in 1 minute.");
+                        nextSyncTime = DateTime.UtcNow.AddMinutes(1);
+                    }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "An error occurred while syncing travel prices.");
+                    nextSyncTime = DateTime.UtcNow.AddMinutes(1);
                 }
 
-                await Task.Delay(_syncInterval, stoppingToken);
+                var delay = nextSyncTime.HasValue
+                ? nextSyncTime.Value - DateTime.UtcNow
+                : TimeSpan.FromMinutes(1);
+
+                if (delay < TimeSpan.Zero)
+                    delay = TimeSpan.Zero;
+
+                _logger.LogInformation($"Next sync scheduled in {delay.TotalSeconds:F0} seconds");
+
+                try
+                {
+                    await Task.Delay(delay, stoppingToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
             }
 
             _logger.LogInformation("TravelPriceSyncService is stopping.");

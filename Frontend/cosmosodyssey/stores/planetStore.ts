@@ -4,6 +4,7 @@ import type {Planet} from '~/types/planet';
 
 export const usePlanetStore = defineStore('planet', () => {
   const planets = ref<Planet[]>([]);
+  const config = useRuntimeConfig();
   const isLoaded = ref(false);
 
   const loadPlanets = async () => {
@@ -18,5 +19,16 @@ export const usePlanetStore = defineStore('planet', () => {
     }
   };
 
-  return { planets, loadPlanets };
+  const getPlanetNames = async () => {
+    try {
+      const response = await fetch(`${config.public.apiBase}Planets/names`);
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.error('Error loading planet names:', error);
+      return [];
+    }
+  }
+
+  return { planets, loadPlanets, getPlanetNames };
 });
