@@ -1,28 +1,25 @@
 <template>
     <div class="session-timer">
         <div class="timer-display" :class="{ 'warning': isWarning }">
-            <div class="timer-icon">⏰</div>
             <div class="timer-text">
-                <span class="timer-label">Session expires in: </span>
+                <span class="timer-label">Session expiration time</span>
                 <span class="timer-countdown">{{ formattedTime }}</span>
             </div>
         </div>
 
         <div v-if="showWarning" class="modal-overlay" style="z-index: 2000;">
             <div class="warning-modal">
-                <div class="warning-icon">⚠️</div>
+                <UIcon name="i-lucide-triangle-alert" class="warning-icon" />
                 <h3>Time to check out!</h3>
                 <p>Your session will expire in less than a minute.</p>
-                <p class="warning-text">
-                    After the session expires routes will be refreshed and your unfinished reservation will be lost!
-                </p>
+                <p> After the session expires routes will be refreshed and your unfinished reservation will be lost!</p>
                 <button @click="dismissWarning" class="dismiss-btn">I understand</button>
             </div>
         </div>
 
         <div v-if="showExpiredModal" class="modal-overlay">
             <div class="expired-modal">
-                <div class="expired-icon">🕐</div>
+                <UIcon name="i-lucide-timer-reset" class="warning-icon" />
                 <h3>Session Expired</h3>
                 <p>Your session has expired. Refreshing routes with new pricelist.</p>
             </div>
@@ -34,7 +31,6 @@
 
 import { usePriceListStore } from '@/stores/priceListStore';
 
-
 export default {
 
     name: 'SessionTimer',
@@ -45,7 +41,7 @@ export default {
         },
         warningThreshold: {
             type: Number,
-            default: 60 * 1000
+            default: 60000
         },
         reservationModalOpen: {
             type: Boolean,
@@ -59,7 +55,8 @@ export default {
             timer: null,
             showWarning: false,
             showExpiredModal: false,
-            warningDismissed: false
+            warningDismissed: false,
+            sessionHandled: false
         }
     },
     mounted() {
@@ -100,6 +97,8 @@ export default {
         },
 
         async handleSessionExpiration() {
+            if (this.sessionHandled) return;
+            this.sessionHandled = true;
             this.clearTimer();
             this.showExpiredModal = true;
 
@@ -107,7 +106,10 @@ export default {
                 isInReservationModule: this.reservationModalOpen
             });
 
-            setTimeout(() => { this.handleRouteRefresh(); }, 5000);
+            setTimeout(() => {
+                this.showExpiredModal = false;
+                this.handleRouteRefresh();
+            }, 5000);
         },
 
         async handleRouteRefresh() {
@@ -131,6 +133,7 @@ export default {
             this.showWarning = false;
             this.showExpiredModal = false;
             this.warningDismissed = false;
+            this.sessionHandled = false;
             this.startTimer();
         }
     },
@@ -172,8 +175,8 @@ export default {
     gap: 8px;
     padding: 8px 16px;
     background: transparent;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
+    border: 1.5px solid #dee2e6;
+    border-radius: 30px;
     font-family: monospace;
     transition: all 0.3s ease;
 }
@@ -184,20 +187,9 @@ export default {
     color: #856404;
 }
 
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.7;
-    }
-}
-
-.timer-icon {
-    font-size: 16px;
+.timer-display.warning .timer-label {
+    color: #242423;
+    animation: pulse 1.5s infinite;
 }
 
 .timer-text {
@@ -207,8 +199,9 @@ export default {
 }
 
 .timer-label {
-    font-size: 12px;
-    opacity: 0.8;
+    font-size: 15px;
+    font-family: 'orbitron', sans-serif;
+    color: #fafcfd;
 }
 
 .timer-countdown {
@@ -231,11 +224,12 @@ export default {
 
 .warning-modal,
 .expired-modal {
-    background: white;
+    background: black;
     padding: 24px;
     border-radius: 12px;
     text-align: center;
     max-width: 600px;
+    border: 2px solid #dee2e6;
 }
 
 .warning-icon,
@@ -252,14 +246,7 @@ export default {
 
 .warning-modal p,
 .expired-modal p {
-    margin: 0 0 16px 0;
-    color: #333;
-}
-
-.warning-text {
-    color: #dc3545;
-    font-weight: 500;
-    margin: 16px 0;
+    margin: 16px;
 }
 
 .dismiss-btn {
@@ -269,8 +256,6 @@ export default {
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
-    margin-top: 16px;
 }
 
 .dismiss-btn:hover {

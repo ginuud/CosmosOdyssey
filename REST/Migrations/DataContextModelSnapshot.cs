@@ -173,25 +173,6 @@ namespace REST.Migrations
                     b.ToTable("RouteInfos", (string)null);
                 });
 
-            modelBuilder.Entity("REST.Models.Customer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers");
-                });
-
             modelBuilder.Entity("REST.Models.ReservedRoute", b =>
                 {
                     b.Property<int>("Id")
@@ -228,7 +209,7 @@ namespace REST.Migrations
 
                     b.HasIndex("RouteInfoId");
 
-                    b.ToTable("RouteSegment");
+                    b.ToTable("RouteSegments", (string)null);
                 });
 
             modelBuilder.Entity("CosmosOdyssey.REST.Models.Leg", b =>

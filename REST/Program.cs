@@ -1,6 +1,5 @@
 using CosmosOdyssey.REST.Data;
 using CosmosOdyssey.REST.Interfaces;
-using CosmosOdyssey.REST.Models;
 using CosmosOdyssey.REST.Services;
 using Microsoft.EntityFrameworkCore;
 using REST.Data.Repos;
@@ -21,10 +20,6 @@ builder.Services
     .AddScoped<IRouteFinderService, RouteFinderService>()
     .AddScoped<IPriceListRepository, PriceListRepo>()
     .AddScoped<IPlanetRepository, PlanetRepo>();
-//     .AddScoped<ICompanyRepository, CompanyRepo>()
-//     .AddScoped<ILegRepository, LegRepo>()
-//     .AddScoped<IProviderRepository, ProviderRepo>()
-//     .AddScoped<IRouteInfoRepository, RouteInfoRepo>()
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {

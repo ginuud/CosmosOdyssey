@@ -73,7 +73,6 @@ namespace REST.Data.Repos
             }
         }
 
-
         public async Task<List<RouteInfo>> GetRouteInfosByIdsAsync(List<Guid> routeInfoIds)
         {
             try

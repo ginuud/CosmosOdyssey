@@ -1,5 +1,5 @@
 import type { Leg } from './leg';
-export type Guid = string;
+import type { Guid } from './guid';
 
 export type PriceList = {
     id: Guid;

@@ -131,8 +131,6 @@ namespace CosmosOdyssey.REST.Data
             modelBuilder.Entity<RouteSegment>().Property(x => x.Id).ValueGeneratedOnAdd();
 
         }
-
-
         public class DesignTimeDataContextFactory : IDesignTimeDbContextFactory<DataContext>
         {
             public DataContext CreateDbContext(string[] args)
@@ -151,5 +149,4 @@ namespace CosmosOdyssey.REST.Data
             }
         }
     }
-
 }

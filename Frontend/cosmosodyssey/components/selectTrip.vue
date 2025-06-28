@@ -153,13 +153,15 @@ body {
   height: 100%;
 }
 
-
 .custom-select {
   border-radius: 0.5rem;
   font-size: 1.2rem;
   font-family: "Orbitron", sans-serif;
   color: #9acef0;
   padding: 0.5rem;
+  padding-bottom: 1rem;
+  width: 210px;
+  cursor: pointer;
 }
 
 .field {
@@ -171,20 +173,16 @@ body {
   border-radius: 0.5rem;
   padding: 0.5rem;
   color: #9acef0;
-  font-weight: 400;
   font-size: 1.2rem;
   font-family: "Orbitron", sans-serif;
 }
 
-
-.flex.flex-col.min-h-0 {
-  padding: 0.1rem;
+.field:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .p-1.isolate {
-  border-radius: 0.5rem;
   padding: 0.5rem;
-  font-size: 0, 5rem;
   font-family: "Orbitron", sans-serif;
 }
 
@@ -205,6 +203,7 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
 .bg {
@@ -261,7 +260,6 @@ body {
   -webkit-transition: all 0.3s;
   -moz-transition: all 0.3s;
   transition: all 0.3s;
-
 }
 
 .around:after {

@@ -1,4 +1,4 @@
-export type Guid = string;
+import type {Guid} from './guid';
 
 export type Planet = {
   id: Guid;

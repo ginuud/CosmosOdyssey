@@ -7,7 +7,6 @@ namespace CosmosOdyssey.REST.Dtos
 {
     public class RouteDto
     {
-        public Guid PriceListId { get; set; }
         public List<Guid> RouteInfoIds { get; set; } = new List<Guid>();
         public string From { get; set; }
         public string To { get; set; }

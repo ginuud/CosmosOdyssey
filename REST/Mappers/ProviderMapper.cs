@@ -19,9 +19,7 @@ namespace REST.Mappers
                 Price = providerModel.Price,
                 FlightStart = providerModel.FlightStart,
                 FlightEnd = providerModel.FlightEnd,
-                //LegId = providerModel.LegId
             };
         }
-
     }
 }

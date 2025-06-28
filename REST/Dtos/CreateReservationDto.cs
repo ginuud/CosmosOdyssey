@@ -13,8 +13,6 @@ namespace CosmosOdyssey.REST.Dtos
         public string? FirstName { get; set; }
         [Required]
         public string? LastName { get; set; }
-        [Required]
-        // public List<RouteInfoDto>? Routes { get; set; }
         public List<Guid>? RouteInfoIds { get; set; } = new List<Guid>();
         public decimal? TotalQuotedPrice { get; set; }
         public decimal? TotalQuotedTravelTime { get; set; }

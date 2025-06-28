@@ -35,124 +35,98 @@ namespace REST.Controllers
          .ToListAsync();
         }
 
-        // [HttpGet("{from}/{to}")]
-        // public async Task<ActionResult<IEnumerable<RouteInfo>>> SearchRoutes(string from, string to)
-        // {
-        //     var routeInfo = await _context.RouteInfos.Where(r => r.From.Name == from && r.To.Name == to).ToListAsync();
-
-        //     return Ok(routeInfo);
-        // }
-
 
         // GET: api/RouteInfos/5
-        // [HttpGet("{id}")]
-        // public async Task<ActionResult<RouteInfo>> GetRouteInfo(Guid id)
-        // {
-        //     var routeInfo = await _context.RouteInfos.FindAsync(id);
+        [HttpGet("{id}")]
+        public async Task<ActionResult<RouteInfo>> GetRouteInfo(Guid id)
+        {
+            var routeInfo = await _context.RouteInfos.FindAsync(id);
 
-        //     if (routeInfo == null)
-        //     {
-        //         return NotFound();
-        //     }
+            if (routeInfo == null)
+            {
+                return NotFound();
+            }
 
-        //     return routeInfo;
-        // }
+            return routeInfo;
+        }
 
-        // // PUT: api/RouteInfos/5
-        // // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        // [HttpPut("{id}")]
-        // public async Task<IActionResult> PutRouteInfo(Guid id, RouteInfo routeInfo)
-        // {
-        //     if (id != routeInfo.Id)
-        //     {
-        //         return BadRequest();
-        //     }
+        // PUT: api/RouteInfos/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutRouteInfo(Guid id, RouteInfo routeInfo)
+        {
+            if (id != routeInfo.Id)
+            {
+                return BadRequest();
+            }
 
-        //     _context.Entry(routeInfo).State = EntityState.Modified;
+            _context.Entry(routeInfo).State = EntityState.Modified;
 
-        //     try
-        //     {
-        //         await _context.SaveChangesAsync();
-        //     }
-        //     catch (DbUpdateConcurrencyException)
-        //     {
-        //         if (!RouteInfoExists(id))
-        //         {
-        //             return NotFound();
-        //         }
-        //         else
-        //         {
-        //             throw;
-        //         }
-        //     }
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!RouteInfoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-        //     return NoContent();
-        // }
+            return NoContent();
+        }
 
-        // [HttpGet("getRoutes/{from}/{to}")]
-        // public async Task<ActionResult<IEnumerable<RouteDto>>> GetRoutes(string from, string to)
-        // {
-        //     var routes = await _context.RouteInfos
-        //         .Include(r => r.From)
-        //         .Include(r => r.To)
-        //         .Where(r => r.From.Name == from && r.To.Name == to)
-        //         .ToListAsync();
 
-        //     if (!routes.Any())
-        //     {
-        //         return NotFound("No routes found for the given origin and destination.");
-        //     }
 
-        //     var routeDtos = routes.SelectMany(route => RouteMapper.ToRouteDto(route, _context)).ToList();
+        // POST: api/RouteInfos
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<RouteInfo>> PostRouteInfo(RouteInfo routeInfo)
+        {
+            _context.RouteInfos.Add(routeInfo);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (RouteInfoExists(routeInfo.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-        //     return Ok(routeDtos);
+            return CreatedAtAction("GetRouteInfo", new { id = routeInfo.Id }, routeInfo);
+        }
 
-        // }
+        // DELETE: api/RouteInfos/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRouteInfo(Guid id)
+        {
+            var routeInfo = await _context.RouteInfos.FindAsync(id);
+            if (routeInfo == null)
+            {
+                return NotFound();
+            }
 
-        // // POST: api/RouteInfos
-        // // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        // [HttpPost]
-        // public async Task<ActionResult<RouteInfo>> PostRouteInfo(RouteInfo routeInfo)
-        // {
-        //     _context.RouteInfos.Add(routeInfo);
-        //     try
-        //     {
-        //         await _context.SaveChangesAsync();
-        //     }
-        //     catch (DbUpdateException)
-        //     {
-        //         if (RouteInfoExists(routeInfo.Id))
-        //         {
-        //             return Conflict();
-        //         }
-        //         else
-        //         {
-        //             throw;
-        //         }
-        //     }
+            _context.RouteInfos.Remove(routeInfo);
+            await _context.SaveChangesAsync();
 
-        //     return CreatedAtAction("GetRouteInfo", new { id = routeInfo.Id }, routeInfo);
-        // }
+            return NoContent();
+        }
 
-        // // DELETE: api/RouteInfos/5
-        // [HttpDelete("{id}")]
-        // public async Task<IActionResult> DeleteRouteInfo(Guid id)
-        // {
-        //     var routeInfo = await _context.RouteInfos.FindAsync(id);
-        //     if (routeInfo == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     _context.RouteInfos.Remove(routeInfo);
-        //     await _context.SaveChangesAsync();
-
-        //     return NoContent();
-        // }
-
-        // private bool RouteInfoExists(Guid id)
-        // {
-        //     return _context.RouteInfos.Any(e => e.Id == id);
-        // }
+        private bool RouteInfoExists(Guid id)
+        {
+            return _context.RouteInfos.Any(e => e.Id == id);
+        }
     }
 }

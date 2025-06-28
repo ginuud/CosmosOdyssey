@@ -1,6 +1,6 @@
 import type { Provider } from './provider';
+import type { Guid } from './guid';
 
-export type Guid = string;
 
 export type Company = {
     id: Guid;

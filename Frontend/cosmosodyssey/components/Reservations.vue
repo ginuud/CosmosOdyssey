@@ -1,36 +1,36 @@
 <template>
     <div class="travel-app">
         <h1>Made Reservations</h1>
-        <div class="see-routes-container">
-            <MoveToRoutesPageButton />
-            <SelectTripButton />
-        </div>
-
-        <div class="filters">
+        <div class="top-bar">
+            <div class="see-routes-container">
+                <MoveToRoutesPageButton />
+                <SelectTripButton />
+            </div>
             <div class="filter-group">
-                <UInput v-model="searchQuery" type="text" placeholder="Search by name..."
-                    class="search-input rounded-full" />
+                <UInput v-model="searchQuery" type="text" placeholder="Search by name..." class="search-input" />
             </div>
         </div>
 
-        <div class="reservation-container">
-            <div v-if="filteredReservations.length === 0" class="no-reservations">
+
+
+        <div class="reservations-container">
+            <div v-if="filteredReservations.length === 0" class="no-data">
                 No reservations where found.
             </div>
 
-            <div v-for="reservation in filteredReservations" :key="`${reservation.id}`" class="reservation-card">
-                <div class="reservation-header">
+            <div v-for="reservation in filteredReservations" :key="`${reservation.id}`" class="card">
+                <div class="header">
                     <h2>{{ reservation.firstName }} {{ reservation.lastName }}</h2>
-                    <span class="reservation" v-if="reservation.routes && reservation.routes.length > 0">
+                    <span class="important-info" v-if="reservation.routes && reservation.routes.length > 0">
                         {{ reservation.routes[0].from.name }} → {{ reservation.routes[reservation.routes.length -
                             1].to.name }}
                     </span>
-                    <span class="reservation" v-else>
+                    <span class=".important-info" v-else>
                         No route info
                     </span>
                 </div>
 
-                <div class="reservation-details">
+                <div class="details">
                     <div class="detail-group">
                         <span class="label">Route(s):</span>
                         <span class="value">{{ Layovers(reservation) }}</span>
@@ -46,8 +46,8 @@
                     </div>
 
                     <div class="detail-group">
-                        <span class="label">Company name(s):</span>
-                        <span class="value">{{ reservation.transportationCompanyNames }}</span>
+                        <span class="label">Company(s):</span>
+                        <span class="value">{{ reservation.transportationCompanyNames.join(', ') }}</span>
                     </div>
                 </div>
             </div>
@@ -117,41 +117,18 @@ onMounted(async () => {
 
 
 <style scoped>
-.travel-app {
-    font-family: 'Orbitron', sans-serif;
-    size: 16px;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-h1 {
-    color: #e4e9ee;
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.filters {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: transparent;
-}
+@import "@/assets/css/cardStyle.css";
 
 .filter-group {
-    display: flex;
-    align-items: center;
     gap: 10px;
-    color: #2c3e50;
+    align-items: center;
+    color: #e2e6ea;
 }
 
-select {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    background-color: white;
+.search-input {
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 1.5px solid #fdfdfd;
 }
 
 .reservations-container {
@@ -160,166 +137,12 @@ select {
     gap: 20px;
 }
 
-.reservation-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease;
-}
-
-.reservation-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.reservation-header {
+.top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #4c39f5;
-}
-
-.reservation-header h2 {
-    margin: 0;
-    font-size: 18px;
-    color: #2c3e50;
-}
-
-.reservation {
-    font-weight: bold;
-    font-size: 18px;
-    color: #4c39f5;
-}
-
-.reservation-details {
-    margin-bottom: 15px;
-}
-
-.detail-group {
-    display: flex;
-    margin-bottom: 5px;
-}
-
-.label {
-    width: 160px;
-    font-weight: bold;
-    color: #666;
-}
-
-.reserve-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #4c39f5;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.reserve-button:hover {
-    background-color: #2b8fad;
-}
-
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    width: 90%;
-    max-width: 500px;
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    position: relative;
-}
-
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
-}
-
-/* .selected-reservation-info {
-    background-color: transparent;
-    padding: 10px;
-    border-radius: 4px;
     margin-bottom: 20px;
-}
-
-.selected-route-info h3 {
-    margin: 0 0 10px 0;
-    color: #2c3e50;
-}
-
-.selected-route-info p {
-    margin: 0;
-    color: #2a4ba3;
-} */
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #111213;
-}
-
-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-
-.no-reservations {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 30px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    color: #6c757d;
-}
-
-.value {
-    color: #0b010c;
-    font-family: 'funnel-web', sans-serif;
-
-}
-
-.reservation-header h2 {
-    margin: 0;
-    font-size: 18px;
-    color: #2c3e50;
-    font-weight: bold;
-}
-
-.modal-content h2 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #03111f;
+    gap: 20px;
 }
 
 .see-routes-container {

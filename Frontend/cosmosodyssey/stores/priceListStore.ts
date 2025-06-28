@@ -6,18 +6,19 @@ export const usePriceListStore = defineStore('priceList', () => {
   const priceLists = ref<PriceList[]>([]);
   const config = useRuntimeConfig();
 
-  const loadPriceLists = async () => {
-    try {
-      const response = await fetch('/api/PriceLists');
-      const data = await response.json();
-      priceLists.value = data.map((item: any) => ({ 
-        ...item,
-        validUntil: new Date(item.validUntil), // Convert validUntil to a Date object
-      }));
-    } catch (error) {
-      console.error('Error loading price lists:', error);
-    }
-  };
+    //vist võib ära võtta
+  // const loadPriceLists = async () => {
+  //   try {
+  //     const response = await fetch('/api/PriceLists');
+  //     const data = await response.json();
+  //     priceLists.value = data.map((item: any) => ({ 
+  //       ...item,
+  //       validUntil: new Date(item.validUntil), // Convert validUntil to a Date object
+  //     }));
+  //   } catch (error) {
+  //     console.error('Error loading price lists:', error);
+  //   }
+  // };
 
   const getLatestPriceList = async () => {
     try {
@@ -32,5 +33,5 @@ export const usePriceListStore = defineStore('priceList', () => {
       return null;
     }
   }
-  return { priceLists, loadPriceLists, getLatestPriceList};
+  return { priceLists, getLatestPriceList};
 });

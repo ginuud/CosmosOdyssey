@@ -42,77 +42,77 @@ namespace REST.Controllers
             return provider;
         }
 
-        // // PUT: api/Providers/5
-        // // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        // [HttpPut("{id}")]
-        // public async Task<IActionResult> PutProvider(Guid id, Provider provider)
-        // {
-        //     if (id != provider.Id)
-        //     {
-        //         return BadRequest();
-        //     }
+        // PUT: api/Providers/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProvider(Guid id, Provider provider)
+        {
+            if (id != provider.Id)
+            {
+                return BadRequest();
+            }
 
-        //     _context.Entry(provider).State = EntityState.Modified;
+            _context.Entry(provider).State = EntityState.Modified;
 
-        //     try
-        //     {
-        //         await _context.SaveChangesAsync();
-        //     }
-        //     catch (DbUpdateConcurrencyException)
-        //     {
-        //         if (!ProviderExists(id))
-        //         {
-        //             return NotFound();
-        //         }
-        //         else
-        //         {
-        //             throw;
-        //         }
-        //     }
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProviderExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-        //     return NoContent();
-        // }
+            return NoContent();
+        }
 
-        // // POST: api/Providers
-        // // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        // [HttpPost]
-        // public async Task<ActionResult<Provider>> PostProvider(Provider provider)
-        // {
-        //     _context.Providers.Add(provider);
-        //     try
-        //     {
-        //         await _context.SaveChangesAsync();
-        //     }
-        //     catch (DbUpdateException)
-        //     {
-        //         if (ProviderExists(provider.Id))
-        //         {
-        //             return Conflict();
-        //         }
-        //         else
-        //         {
-        //             throw;
-        //         }
-        //     }
+        // POST: api/Providers
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Provider>> PostProvider(Provider provider)
+        {
+            _context.Providers.Add(provider);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (ProviderExists(provider.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-        //     return CreatedAtAction("GetProvider", new { id = provider.Id }, provider);
-        // }
+            return CreatedAtAction("GetProvider", new { id = provider.Id }, provider);
+        }
 
-        // // DELETE: api/Providers/5
-        // [HttpDelete("{id}")]
-        // public async Task<IActionResult> DeleteProvider(Guid id)
-        // {
-        //     var provider = await _context.Providers.FindAsync(id);
-        //     if (provider == null)
-        //     {
-        //         return NotFound();
-        //     }
+        // DELETE: api/Providers/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProvider(Guid id)
+        {
+            var provider = await _context.Providers.FindAsync(id);
+            if (provider == null)
+            {
+                return NotFound();
+            }
 
-        //     _context.Providers.Remove(provider);
-        //     await _context.SaveChangesAsync();
+            _context.Providers.Remove(provider);
+            await _context.SaveChangesAsync();
 
-        //     return NoContent();
-        // }
+            return NoContent();
+        }
 
         private bool ProviderExists(Guid id)
         {

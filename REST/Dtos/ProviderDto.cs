@@ -14,6 +14,5 @@ namespace CosmosOdyssey.REST.Dtos
         public DateTime FlightStart { get; set; }
         public DateTime FlightEnd { get; set; }
         public Guid LegId { get; set; }
-
     }
 }

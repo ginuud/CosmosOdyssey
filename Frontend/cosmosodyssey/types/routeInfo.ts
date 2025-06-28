@@ -1,5 +1,5 @@
 import type {Planet} from './planet';
-export type Guid = string;
+import type {Guid} from './guid';
 
 export type RouteInfo = {
     id: Guid;

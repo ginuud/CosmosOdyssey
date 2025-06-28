@@ -7,17 +7,18 @@ export const usePlanetStore = defineStore('planet', () => {
   const config = useRuntimeConfig();
   const isLoaded = ref(false);
 
-  const loadPlanets = async () => {
-    if (isLoaded.value) return;
-    try {
-        const response = await fetch('/api/Planets');
-        const data = await response.json();
-        planets.value = data as Planet[];
-        isLoaded.value = true;
-    } catch (error) {
-      console.error('Error loading planets:', error);
-    }
-  };
+  //vist võib ära võtta
+  // const loadPlanets = async () => {
+  //   if (isLoaded.value) return;
+  //   try {
+  //       const response = await fetch('/api/Planets');
+  //       const data = await response.json();
+  //       planets.value = data as Planet[];
+  //       isLoaded.value = true;
+  //   } catch (error) {
+  //     console.error('Error loading planets:', error);
+  //   }
+  // };
 
   const getPlanetNames = async () => {
     try {
@@ -30,5 +31,5 @@ export const usePlanetStore = defineStore('planet', () => {
     }
   }
 
-  return { planets, loadPlanets, getPlanetNames };
+  return { planets, getPlanetNames };
 });

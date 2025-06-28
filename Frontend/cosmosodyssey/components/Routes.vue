@@ -39,32 +39,20 @@
         </div>
 
         <div class="routes-container">
-            <div v-if="filteredAndSortedRoutes.length === 0" class="no-routes">
+            <div v-if="filteredAndSortedRoutes.length === 0" class="no-data">
                 No trips where found.
             </div>
 
-            <div v-for="route in filteredAndSortedRoutes" :key="`${route.price}-${route.travelTime}`"
-                class="route-card">
-                <div class="route-header">
+            <div v-for="route in filteredAndSortedRoutes" :key="`${route.price}-${route.travelTime}`" class="card">
+                <div class="header">
                     <h2>{{ route.from }} → {{ route.to }}</h2>
-                    <span class="price">{{ route.price }}$</span>
+                    <span class="important-info">{{ route.price }}$</span>
                 </div>
 
-                <div class="route-details">
+                <div class="details">
                     <div class="detail-group">
                         <span class="label">Company:</span>
                         <span class="value">{{ route.companyNames.join(', ') }}</span>
-                    </div>
-
-                    <!-- testimiseks: -->
-                    <div class="detail-group">
-                        <span class="label">Price List Id:</span>
-                        <span class="value">{{ route.priceListId }}</span>
-                    </div>
-
-                    <div class="detail-group">
-                        <span class="label">route Info Ids:</span>
-                        <span class="value">{{ route.routeInfoIds.join(', ') }}</span>
                     </div>
 
                     <div class="detail-group">
@@ -78,6 +66,9 @@
                     </div>
                 </div>
 
+
+
+
                 <button @click="openReservationModal(route)" class="reserve-button">Make a reservation</button>
             </div>
         </div>
@@ -88,10 +79,14 @@
                 <h2>Plan a trip</h2>
                 <div class="selected-route-info">
                     <h3>{{ selectedRoute?.from }} → {{ selectedRoute?.to }}</h3>
-                    <p><span class="label">Company(s):</span> {{ selectedRoute?.companyNames?.join(', ') }}</p>
-                    <p><span class="label">Price:</span> {{ selectedRoute?.price }}€ </p>
-                    <p><span class="label">Travel time:</span> {{ formatTravelTime(selectedRoute?.travelTime ?? 0) }}
-                    </p>
+                    <div class="selected-trip-details">
+                        <span class="label">Company(s):</span>
+                        <span class="value">{{ selectedRoute?.companyNames?.join(', ') }}</span>
+                        <span class="label">Price:</span>
+                        <span class="value">{{ selectedRoute?.price }}€ </span>
+                        <span class="label">Travel time:</span>
+                        <span class="value">{{ formatTravelTime(selectedRoute?.travelTime ?? 0) }} </span>
+                    </div>
                 </div>
 
                 <form @submit.prevent="submitReservation">
@@ -109,6 +104,7 @@
                 </form>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -120,6 +116,7 @@ import { useRouteStore } from '~/stores/RouteStore';
 import { useRouteInfoStore } from '~/stores/RouteInfoStore';
 import { useReservationStore } from '~/stores/reservationStore';
 import type { Route } from '~/types/route';
+import { watch } from 'vue';
 
 
 const route = useRoute();
@@ -148,6 +145,14 @@ const selectedRoute = ref<Route | null>(null);
 const reservation = ref({
     firstName: "",
     lastName: ""
+});
+
+watch(showReservationModal, (val) => {
+    if (val) {
+        document.body.classList.add('modal-open');
+    } else {
+        document.body.classList.remove('modal-open');
+    }
 });
 
 
@@ -248,30 +253,16 @@ onMounted(async () => {
 });
 </script>
 
-
 <style scoped>
-.travel-app {
-    font-family: 'Orbitron', sans-serif;
-    size: 16px;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-h1 {
-    color: #e4e9ee;
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 30px;
-}
+@import "@/assets/css/cardStyle.css";
 
 .filters {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
     padding: 15px;
-    background-color: #f5f7fa;
-    border-radius: 8px;
+    background-color: #bdd1f0;
+    border-radius: 30px;
 }
 
 .filter-group {
@@ -284,7 +275,6 @@ h1 {
 select {
     padding: 8px;
     border-radius: 4px;
-    border: 1px solid #ddd;
     background-color: white;
 }
 
@@ -292,57 +282,7 @@ select {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-}
-
-.route-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease;
-}
-
-.route-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.route-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #4c39f5;
-}
-
-.route-header h2 {
-    margin: 0;
-    font-size: 18px;
-    color: #2c3e50;
-}
-
-.price {
-    font-weight: bold;
-    font-size: 18px;
-    color: #4c39f5;
-}
-
-.route-details {
-    margin-bottom: 15px;
-}
-
-.detail-group {
-    display: flex;
-    margin-bottom: 5px;
-}
-
-.label {
-    width: 160px;
-    font-weight: bold;
-    color: #0b0b0b;
-    font-family: 'orbitron', sans-serif;
+    align-items: flex-start;
 }
 
 .reserve-button {
@@ -392,7 +332,6 @@ select {
 }
 
 .selected-route-info {
-    background-color: transparent;
     padding: 10px;
     border-radius: 4px;
     margin-bottom: 20px;
@@ -409,13 +348,17 @@ select {
     font-family: 'funnel-web', sans-serif;
 }
 
+.selected-trip-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .form-group {
     margin-bottom: 15px;
 }
 
 label {
-    display: block;
-    margin-bottom: 5px;
     font-weight: bold;
     color: #111213;
 }
@@ -432,7 +375,6 @@ input {
     padding: 10px;
     background-color: #0c66cc;
     color: white;
-    border: none;
     border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
@@ -440,28 +382,6 @@ input {
 
 .submit-button:hover {
     background-color: #0056b3;
-}
-
-.no-routes {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 30px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    color: #6c757d;
-}
-
-.value {
-    color: #0b010c;
-    font-family: 'funnel-web', sans-serif;
-
-}
-
-.route-header h2 {
-    margin: 0;
-    font-size: 18px;
-    color: #2c3e50;
-    font-weight: bold;
 }
 
 .modal-content h2 {
@@ -473,10 +393,7 @@ input {
 .see-reservations-container {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     gap: 16px;
-    margin-bottom: 20px;
-
 }
 
 .buttons {
@@ -485,5 +402,11 @@ input {
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 20px;
+}
+</style>
+
+<style>
+body.modal-open {
+    overflow: hidden;
 }
 </style>

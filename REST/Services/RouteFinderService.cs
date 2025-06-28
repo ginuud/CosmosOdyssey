@@ -125,7 +125,6 @@ namespace REST.Services
                 {
                     routeDtos.Add(new RouteDto
                     {
-                        PriceListId = path.First().PriceList.Id, // testimine
                         RouteInfoIds = path.Select(l => l.RouteInfoId).ToList(),
                         From = path.First().RouteInfo.From.Name ?? "Unknown",
                         To = path.Last().RouteInfo.To.Name ?? "Unknown",
@@ -140,5 +139,4 @@ namespace REST.Services
             return routeDtos;
         }
     }
-
 }

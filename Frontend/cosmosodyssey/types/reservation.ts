@@ -1,6 +1,5 @@
 import type { RouteInfo } from './routeInfo';
-
-export type Guid = string;
+import type { Guid } from './guid';
 
 export type Reservation = {
     id: number;

@@ -1,7 +1,6 @@
-export type Guid = string;
+import type { Guid } from './guid';
 
 export type Route = {
-    priceListId: Guid;
     routeInfoIds: Guid[];
     from: string;
     to: string;

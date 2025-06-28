@@ -28,11 +28,11 @@ namespace CosmosOdyssey.REST.Controllers
             try
             {
                 if (string.IsNullOrEmpty(fromPlanet) || string.IsNullOrEmpty(toPlanet))
-                    return BadRequest("Both fromPlanet and toPlanet are required.");
+                    return BadRequest("Both from Planet and to Planet are required");
 
                 var routes = await _routeFinder.FindAllRoutesAsync(fromPlanet, toPlanet);
                 if (routes == null || !routes.Any())
-                    return NotFound("No routes found for the given origin and destination.");
+                    return NotFound("No routes found for the given origin and destination");
                 return Ok(routes);
             }
             catch (Exception ex)

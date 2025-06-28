@@ -1,8 +1,8 @@
 import type {RouteInfo} from './routeInfo';
 import type {Provider} from './provider';
 import type {PriceList} from './priceList';
+import type {Guid} from './guid';
 
-export type Guid = string;
 
 export type Leg = {
     id: Guid;
